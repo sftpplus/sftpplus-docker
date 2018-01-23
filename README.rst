@@ -2,13 +2,18 @@ SFTPPlus Docker
 ===============
 
 `Dockerfile` and related files for creating Docker containers running
-Pro:Atria's SFTPPlus server.
+Pro:Atria's SFTPPlus MFT for evaluation purpose.
 
 `sftpplus-docker-setup.sh` is the main script which is called to create the
 SFTPPlus environment for the image.
 It does a standard SFTPPlus installation where the SSH keys are generated each
 time the image is created and FTPS and HTTPS are using self-signed
 certificates.
+
+Since the SSH keys and SSL certificates are automatically generated, the
+`Dockerfile` as presented here is not suitable for production.
+
+It is provides as an evaluation tool.
 
 
 Step-by-step guide
