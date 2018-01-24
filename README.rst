@@ -70,9 +70,22 @@ Launching a container
 * Once you have the image created, you may start the new Docker container.
   In  this example we will run a container named `sftpplus-instance` which
   is using the `sftpplus:3.29.0` image and makes all the ports available to
-  the outside world::
+  the outside world. There are a lot of services and ports::
 
-    docker run -d -P --name sftpplus-instance sftpplus:3.29.0
+    docker run -d --name sftpplus-instance \
+        -p 10020:10020 \
+        -p 10080:10080 \
+        -p 10443:10443 \
+        -p 10022:10022 \
+        -p 10023:10023 \
+        -p 10021:10021 \
+        -p 10990:10990 \
+        -p 10900-10910:10900-10910 \
+        sftpplus:3.29.0
+
+* You can check that the container is started::
+
+    docker ps -a
 
 * You can check the logs with::
 
@@ -81,6 +94,11 @@ Launching a container
 * And stop the container with::
 
     docker stop sftpplus-instance
+
+* To check how the image is created, you can start with a shell and inspect
+  it::
+
+    docker run -it --name sftpplus-debug sftpplus:3.29.0 /bin/sh
 
 
 Issues and questions
