@@ -6,6 +6,7 @@ cd /opt
 ln -s sftpplus-alpine36-x64-${SFTPPLUS_VERSION} sftpplus
 
 # Initialize SFTPPlus configuration.
+# This will generate the SSH keys and the self signed certificates.
 cd sftpplus
 ./bin/admin-commands.sh initialize
 
@@ -13,5 +14,15 @@ cd sftpplus
 addgroup sftpplus
 adduser -G sftpplus -g "SFTPPlus" -s /bin/false -h /dev/null -H -D sftpplus
 
+# Merge the configuration file and clean the source configuration.
+mv /opt/configuration/* /opt/sftpplus/configuration/
+rm -rf /opt/configuration
+
+# Create the basic storage folder for the test user.
+mkdir -p /srv/storage/test_user
+
 # Adjust ownership of the configuration files and logs.
-chown -R sftpplus:sftpplus /opt/sftpplus/configuration /opt/sftpplus/log
+chown -R sftpplus:sftpplus \
+    /opt/sftpplus/configuration \
+    /opt/sftpplus/log \
+    /srv/storage
