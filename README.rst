@@ -89,7 +89,7 @@ Launching a container
 
 * You can check the logs with::
 
-    docker log sftpplus-instance
+    docker logs sftpplus-instance
 
 * And stop the container with::
 
