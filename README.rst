@@ -35,3 +35,10 @@ Step-by-step guide
 * If successful, you may start the new Docker container with::
 
     docker run sftpplus
+
+
+Issues and questions
+--------------------
+
+For issues and questions, please create a new Issue.
+For contributions please open a Pull Request.
