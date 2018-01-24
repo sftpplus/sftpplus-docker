@@ -19,16 +19,22 @@ It is provided as an evaluation tool.
 Step-by-step guide
 ------------------
 
+Pre-requisites:
+
 * We assume a working Docker setup. We used version `17.06.0-ce`.
+
+* We assume that you have downloaded SFTPPlus. Please download the Alpine version.
+
+Instructions:
 
 * Clone this repo.
 
-* Download and copy from this directory the Alpine release for SFTPPlus.
+* Copy the SFTPPLus Alpine release into the repo directory.
 
 * Adjust `SFTPPLUS_VERSION` in `Dockerfile` to match the version which was
-  dowloaded.
+  downloaded.
 
-* From inside this directory build the `sftpplus` container with::
+* From inside the main repo directory build the `sftpplus` container with::
 
     docker build -t sftpplus .
 
