@@ -1,14 +1,16 @@
-# Uses an official image for Alpine as a parent image.
-FROM alpine:3.6
+# The trial SFTPPlus version is based on Debian 7.
+# For the Docker image we are using a minimal Debian distribution.
+FROM debian:7-slim
 
 # Official Dockerfile for SFTPPlus.
 MAINTAINER support@sftpplus.com
 
 # Define version as an environment variable.
-ENV SFTPPLUS_VERSION 3.29.0
+# For the non-trial version, it will be linux-x64-3.29.0:
+ENV SFTPPLUS_VARIANT linux-x64-trial
 
 # Put the files needed to customize the image.
-ADD sftpplus-alpine36-x64-${SFTPPLUS_VERSION}.tar.gz sftpplus-docker-setup.sh /opt/
+ADD sftpplus-${SFTPPLUS_VARIANT}.tar.gz sftpplus-docker-setup.sh /opt/
 ADD configuration/ /opt/configuration/
 
 # Inform docker about what ports are used by the application.

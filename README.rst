@@ -2,7 +2,7 @@ SFTPPlus Docker
 ===============
 
 `Dockerfile` and related files for creating Docker containers running
-Pro:Atria's SFTPPlus MFT for evaluation purpose.
+Pro:Atria's SFTPPlus MFT trial version for evaluation purpose.
 
 `sftpplus-docker-setup.sh` is the main script which is called to create the
 SFTPPlus environment for the image.
@@ -32,34 +32,40 @@ all the ports.
 You might want to disable / remove some of the services and map them to
 different ports.
 
+For production usage it is recommended to remove the `test_user` account.
+
+
+Pre-requisites
+--------------
+
+We assume that you alerady have a working Docker environment.
+We used version `17.06.0-ce`.
+
+You should you have downloaded generic Linux SFTPPlus version.
+Either the trial version or the full version.
+
 
 Docker Image Creation
 ---------------------
 
-Pre-requisites:
-
-* We assume a working Docker setup. We used version `17.06.0-ce`.
-
-* We assume that you have downloaded SFTPPlus.
-  Please download the Alpine version.
-
-Instructions:
-
 * Clone this repository.
 
-* Copy the SFTPPLus Alpine release into the root directory of the cloned
-  repository.
+* Get the SFTPPlus generic Linux version.
+  In this example is the link for the trial, but you can replace it with your
+  full version::
+
+    wget https://download.sftpplus.com/trial/sftpplus-linux-x64-trial.tar.gz
 
 * Check the `server-configuration.ini` configuration file to match your needs.
 
 * Adjust `SFTPPLUS_VERSION` in `Dockerfile` to match the version which was
   downloaded.
-  The default Dockerfile from this repo will work with SFTPPlus version 3.29.0
+  The default Dockerfile from this repo will work with SFTPPlus trial version.
 
 * From inside the main directory build the `sftpplus` image with
-  (replace `3.29.0` with your preferred tag, ex use the SFTPPlus version)::
+  (replace `3.29.0.trial` with your preferred tag)::
 
-    docker build -t sftpplus:3.29.0 .
+    docker build -t sftpplus:3.29.0.trial .
 
 * If successful, you should see the new image available inside your Docker
   server ::
@@ -84,7 +90,7 @@ Launching a container
         -p 10021:10021 \
         -p 10990:10990 \
         -p 10900-10910:10900-10910 \
-        sftpplus:3.29.0
+        sftpplus:3.29.0.trial
 
 * You can check that the container is started::
 
