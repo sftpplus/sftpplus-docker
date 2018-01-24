@@ -13,6 +13,9 @@ The FTPS and HTTPS are using self-signed certificates.
 It is provided as an evaluation tool and the base for creating a custom
 SFTPPlus image to suit your production needs.
 
+A testing account named `test_user` and password `test_password` is created
+by default.
+
 
 Image Customization
 -------------------
@@ -99,6 +102,10 @@ Launching a container
   it::
 
     docker run -it --name sftpplus-debug sftpplus:3.29.0 /bin/sh
+
+* To inspect a container which is already running use:
+
+    docker exec -it sftpplus-instance /bin/sh
 
 
 Issues and questions
