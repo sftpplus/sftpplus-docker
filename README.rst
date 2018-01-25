@@ -34,6 +34,20 @@ different ports.
 
 For production usage it is recommended to remove the `test_user` account.
 
+The logs produced by the server are send to standard output so that they
+are available to the `docker log` infrastructure.
+
+A copy of the logs is also stored in local files, which are rotated daily
+and kept for up to 30 days.
+If you are using exclusively the `docker log` infrastructure,
+you might want to disable local files.
+
+For demonstration purpose, all events are also stored in a SQLite database
+and available for navigation inside the Local Manager.
+For a production environment this can soon grow to a significant size and
+in the same time can become a performance hit.
+It is recommended to either disable it or use an external MySQL database.
+
 
 Pre-requisites
 --------------
