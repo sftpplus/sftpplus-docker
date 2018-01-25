@@ -70,7 +70,7 @@ Docker Image Creation
 
     wget https://download.sftpplus.com/trial/sftpplus-linux-x64-trial.tar.gz
 
-* Check the `server-configuration.ini` configuration file to match your needs.
+* Check the `configuration/server.ini` configuration file to match your needs.
 
 * Adjust `SFTPPLUS_VERSION` in `Dockerfile` to match the version which was
   downloaded.
@@ -123,7 +123,7 @@ Launching a container
 
     docker run -it --name sftpplus-debug sftpplus:3.29.0 /bin/sh
 
-* To inspect a container which is already running use:
+* To inspect a container which is already running use::
 
     docker exec -it sftpplus-instance /bin/sh
 
