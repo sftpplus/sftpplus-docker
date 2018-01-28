@@ -73,7 +73,7 @@ Docker Image Creation
 * Check the `configuration/server.ini` configuration file to match your needs.
 
 * Adjust `SFTPPLUS_VERSION` in `Dockerfile` to match the version which was
-  downloaded.
+  downloaded. In this example, the version is 3.29.0.
   The default Dockerfile from this repo will work with SFTPPlus trial version.
 
 * From inside the main directory build the `sftpplus` image with
