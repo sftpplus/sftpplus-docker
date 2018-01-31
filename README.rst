@@ -1,8 +1,9 @@
 SFTPPlus Docker
 ===============
 
-`Dockerfile` and related files for creating Docker containers running
-Pro:Atria's SFTPPlus MFT trial version for evaluation purpose.
+This repository contains the `Dockerfile` and related files for creating Docker
+containers running Pro:Atria's SFTPPlus Managed File Transfer for evaluation
+purposes.
 
 `sftpplus-docker-setup.sh` is the main script which is called to create the
 SFTPPlus environment for the image.
@@ -10,8 +11,8 @@ It does a standard SFTPPlus installation where the SSH keys are generated each
 time the image is created.
 The FTPS and HTTPS are using self-signed certificates.
 
-It is provided as an evaluation tool and the base for creating a custom
-SFTPPlus image to suit your production needs.
+This repository is provided as an evaluation tool and the base for creating a
+custom SFTPPlus image to suit your production needs.
 
 A testing account named `test_user` and password `test_password` is created
 by default.
@@ -55,8 +56,8 @@ Pre-requisites
 We assume that you alerady have a working Docker environment.
 We used version `17.06.0-ce`.
 
-You should you have downloaded generic Linux SFTPPlus version.
-Either the trial version or the full version.
+You should you have downloaded a generic Linux SFTPPlus version - either the trial
+or the full version.
 
 
 Docker Image Creation
@@ -91,7 +92,7 @@ Launching a container
 ---------------------
 
 * Once you have the image created, you may start the new Docker container.
-  In  this example we will run a container named `sftpplus-instance` which
+  In this example, we will run a container named `sftpplus-instance` which
   is using the `sftpplus:3.29.0` image and makes all the ports available to
   the outside world. There are a lot of services and ports::
 
@@ -131,5 +132,10 @@ Launching a container
 Issues and questions
 --------------------
 
-For issues and questions, please create a new Issue.
-For contributions please open a Pull Request.
+For discussions, issues and questions, please create and use issues and pull requests in the Github repo.
+
+For contributions, please feel free to open a new pull request.
+
+Website: https://www.sftpplus.com
+
+SFTPPlus Documentation: https://www.sftpplus.com/documentation/sftpplus/latest/
