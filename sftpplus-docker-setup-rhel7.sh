@@ -1,13 +1,16 @@
 # To be used with the SFTPPlus Dockerfile.
-set -xe
 
 # Get the OpenSSL library as this is the only dependency.
-apt-get update
-apt-get install -y openssl
+yum check-update
+yum update openssl
+yum info openssl
+
+# yum check-updates has exit code 100 when packages need to be updated.
+set -xe
 
 # Link the unpacked sub-dir as /opt/sftpplus.
 cd /opt
-ln -s sftpplus-${SFTPPLUS_VARIANT} sftpplus
+ln -s sftpplus-${SFTPPLUS_OS}-x64-${SFTPPLUS_VERSION} sftpplus
 
 # Initialize SFTPPlus configuration.
 # This will generate the SSH keys and the self signed certificates.
@@ -16,7 +19,7 @@ cd sftpplus
 
 # Add default group and user.
 groupadd sftpplus
-useradd -g sftpplus -c "SFTPPlus" -s /bin/false -d /dev/null sftpplus
+useradd -g sftpplus -c "SFTPPlus" -s /bin/false -d /dev/null -M sftpplus
 
 # Merge the configuration file and clean the source configuration.
 mv /opt/configuration/* /opt/sftpplus/configuration/

@@ -53,11 +53,15 @@ It is recommended to either disable it or use an external MySQL database.
 Pre-requisites
 --------------
 
-We assume that you alerady have a working Docker environment.
-We used version `17.06.0-ce`.
+We assume that you already have a working Docker environment.
+We used version `18.09.1`.
 
-You should you have downloaded a generic Linux SFTPPlus version - either the trial
-or the full version.
+You should you have downloaded a SFTPPlus version,
+either the trial or the full version.
+
+This repository contains example for the following operating systems:
+* RHEL 7 / CentOS 7
+* Debian 8
 
 
 Docker Image Creation
@@ -65,16 +69,16 @@ Docker Image Creation
 
 * Clone this repository.
 
-* Get the SFTPPlus generic Linux version.
-  In this example is the link for the trial, but you can replace it with your
-  full version::
+* Get your preferred SFTPPlus version.
+  In this example is the link for the trial,
+  but you can replace it with your full version::
 
-    wget https://download.sftpplus.com/trial/sftpplus-linux-x64-trial.tar.gz
+    wget https://download.sftpplus.com/trial/sftpplus-rhel7-x64-trial.tar.gz
 
 * Check the `configuration/server.ini` configuration file to match your needs.
 
-* Adjust `SFTPPLUS_VERSION` in `Dockerfile` to match the version which was
-  downloaded. In this example, the version is 3.29.0.
+* Adjust `SFTPPLUS_OS` and `SFTPPLUS_VERSION` in `Dockerfile`
+  to match the version which was downloaded.
   The default Dockerfile from this repo will work with SFTPPlus trial version.
 
 * From inside the main directory build the `sftpplus` image with
