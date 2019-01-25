@@ -60,6 +60,7 @@ You should you have downloaded a SFTPPlus version,
 either the trial or the full version.
 
 This repository contains example for the following operating systems:
+
 * RHEL 7 / CentOS 7
 * Debian 8
 
@@ -82,9 +83,9 @@ Docker Image Creation
   The default Dockerfile from this repo will work with SFTPPlus trial version.
 
 * From inside the main directory build the `sftpplus` image with
-  (replace `3.29.0.trial` with your preferred tag)::
+  (replace `3.43.1.trial` with your preferred tag)::
 
-    docker build -t sftpplus:3.29.0.trial .
+    docker build -t sftpplus:3.43.1.trial .
 
 * If successful, you should see the new image available inside your Docker
   server ::
@@ -109,7 +110,7 @@ Launching a container
         -p 10021:10021 \
         -p 10990:10990 \
         -p 10900-10910:10900-10910 \
-        sftpplus:3.29.0.trial
+        sftpplus:3.43.1.trial
 
 * You can check that the container is started::
 
@@ -126,7 +127,7 @@ Launching a container
 * To check how the image is created, you can start with a shell and inspect
   it::
 
-    docker run -it --name sftpplus-debug sftpplus:3.29.0 /bin/sh
+    docker run -it --name sftpplus-debug sftpplus:3.43.1 /bin/sh
 
 * To inspect a container which is already running use::
 

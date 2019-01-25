@@ -43,4 +43,5 @@ WORKDIR /opt/sftpplus
 
 # Start the server.
 # In debug mode all log are sent to stdout, enabling Docker logs.
+USER sftpplus
 CMD [ "bin/admin-commands.sh", "debug" ]
