@@ -5,16 +5,16 @@
 #
 # This repo contains samples for:
 # * centos:7
-# * debian:8-slim
+# * debian:8
 #
 FROM centos:7
 
 # Official Dockerfile for SFTPPlus.
 MAINTAINER support@sftpplus.com
 
-# Code of the OS on which SFTPPlus runs
+# Code of the OS on which SFTPPlus runs.
 ENV SFTPPLUS_OS rhel7
-# For the non-trial version, it will be 3.29.0
+# For the non-trial version it will be the version, eg. "3.44.0".
 ENV SFTPPLUS_VERSION trial
 
 # Inform docker about what ports are used by the application.
@@ -31,7 +31,7 @@ EXPOSE 10020 10080 10443 10022 10023 10021 10990 10900-10910
 # Build steps
 #
 
-# Put the files needed to customize the image.
+# Add the files needed to customize the image.
 ADD sftpplus-${SFTPPLUS_OS}-x64-${SFTPPLUS_VERSION}.tar.gz sftpplus-docker-setup-${SFTPPLUS_OS}.sh /opt/
 ADD configuration/ /opt/configuration/
 
@@ -42,6 +42,6 @@ RUN /opt/sftpplus-docker-setup-${SFTPPLUS_OS}.sh
 WORKDIR /opt/sftpplus
 
 # Start the server.
-# In debug mode all log are sent to stdout, enabling Docker logs.
+# In debug mode all logs are sent to stdout, enabling Docker logs.
 USER sftpplus
 CMD [ "bin/admin-commands.sh", "debug" ]
