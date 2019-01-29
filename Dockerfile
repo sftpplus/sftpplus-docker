@@ -5,7 +5,7 @@
 #
 # This repo contains samples for:
 # * centos:7
-# * debian:8-slim
+# * debian:8
 #
 FROM centos:7
 
