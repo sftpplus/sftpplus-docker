@@ -27,6 +27,12 @@ the default `Dockerfile` presented here is not suitable for production.
 For production usage you should add your own SSH keys and SSL certificates to
 the `configuration/` subdirectory. Then modify `server.ini` to use these files.
 
+User data should be handled by a separate volume, outside of the container,
+mounted from the docker host.
+This will allow the data to persist when the container no longer exists,
+and also ease access to the data outside of the container .
+For production usage, dedicated volumes should be used for user data.
+
 The default configuration will enable all the supported protocols and expose
 all the ports they require.
 You might want to disable / remove some of the services or map them to
