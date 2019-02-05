@@ -55,13 +55,14 @@ Pre-requisites
 We assume that you already have a working Docker environment.
 We used version `18.09.1`.
 
-You should have downloaded an SFTPPlus version,
+You should have downloaded an SFTPPlus installation package,
 either the trial or the full version.
 
-This repository contains example for the following operating systems:
+This repository contains examples for the following operating systems:
 
 * RHEL 7 / CentOS 7
 * Debian 8
+* Alpine 3.7
 
 
 Docker Image Creation
@@ -79,9 +80,9 @@ Docker Image Creation
 
 * Adjust `SFTPPLUS_OS` and `SFTPPLUS_VERSION` in `Dockerfile`
   to match the downloaded version.
-  The default Dockerfile from this repo works with the SFTPPlus trial version.
+  The Dockerfile from this repo works with the SFTPPlus trial version too.
 
-* From inside the main directory build the `sftpplus` image with
+* From inside the main directory, build the `sftpplus` image with
   (replace `3.44.0.trial` with your preferred tag)::
 
     docker build -t sftpplus:3.44.0.trial .
@@ -134,9 +135,10 @@ Launching a container
 Issues and questions
 --------------------
 
-For discussions, issues and questions, please create and use issues and pull requests in the Github repo.
+For discussions, issues, questions, etc. please create or use
+issues in this Github repo.
 
-For contributions, please feel free to open a new pull request.
+For contributions, please feel free to open new pull requests.
 
 Website: https://www.sftpplus.com
 
