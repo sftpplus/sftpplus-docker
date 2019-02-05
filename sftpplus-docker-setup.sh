@@ -1,8 +1,8 @@
 # To be used with the SFTPPlus Dockerfile.
 
 # Get relevant deps per distribution installed.
-source /etc/os-release
-case "$ID" in
+. /etc/os-release
+case ${ID} in
     rhel|centos)
         # Get the OpenSSL library as this is the only dependency.
         yum check-update
@@ -33,7 +33,7 @@ cd sftpplus
 ./bin/admin-commands.sh initialize
 
 # Add default group and user.
-case "$ID" in
+case ${ID} in
     alpine)
         addgroup sftpplus
         adduser -G sftpplus -g "SFTPPlus" -s /bin/false -h /dev/null -H -D sftpplus
