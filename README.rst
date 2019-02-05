@@ -28,9 +28,9 @@ For production usage you should add your own SSH keys and SSL certificates to
 the `configuration/` subdirectory. Then modify `server.ini` to use these files.
 
 User data should be handled by a separate volume, outside of the container,
-mounted from the docker host.
+mounted from the Docker host.
 This will allow the data to persist when the container no longer exists,
-and also ease access to the data outside of the container .
+and also ease access to the data outside of the container.
 For production usage, dedicated volumes should be used for user data.
 
 The default configuration will enable all the supported protocols and expose
