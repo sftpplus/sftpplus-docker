@@ -141,6 +141,47 @@ This will allow the data to persist when the container no longer exists,
 and also ease access to the data outside of the container.
 For production usage, dedicated volumes should be used for user data.
 
+For example, for the above Docker image, let's create a dedicated volume
+before running it::
+
+    docker volume create sftpplus_trial_storage
+
+Then we should mount this to `/srv/storage` (as per the included configuration
+file) when running the container::
+
+    docker run --detach --name sftpplus-trial-instance \
+        --publish 10020:10020 \
+        --publish 10080:10080 \
+        --publish 10443:10443 \
+        --publish 10022:10022 \
+        --publish 10023:10023 \
+        --publish 10021:10021 \
+        --publish 10990:10990 \
+        --publish 10900-10910:10900-10910 \
+        --mount source=sftpplus_trial_storage,target=/srv/storage \
+        sftpplus:3.44.0.trial
+
+Use ``docker inspect sftpplus-trial-instance`` to verify that the volume
+was created and mounted correctly. Look for the ``Mounts`` section::
+
+        "Mounts": [
+            {
+                "Type": "volume",
+                "Name": "sftpplus_trial_storage",
+                "Source": "/var/lib/docker/volumes/sftpplus_trial_storage/_data",
+                "Destination": "/srv/storage",
+                "Driver": "local",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+            }
+        ],
+
+When you are done testing the trial container, after removing it,
+you can also delete the newly-created volume with::
+
+        docker volume rm sftpplus_trial_storage
+
 
 Issues and questions
 --------------------
