@@ -86,12 +86,12 @@ Docker Image Creation
 
 * Adjust `SFTPPLUS_OS` and `SFTPPLUS_VERSION` in `Dockerfile`
   to match the downloaded version.
-  The Dockerfile from this repo works with the SFTPPlus trial version too.
+  The Dockerfile from this repository works with the SFTPPlus trial version too.
 
 * From inside the main directory, build the `sftpplus` image with
   (replace `3.44.0.trial` with your preferred tag)::
 
-    docker build -t sftpplus:3.44.0.trial .
+    docker build --tag sftpplus:3.44.0.trial .
 
 * If successful, you should see the new available Docker image with::
 
@@ -102,47 +102,51 @@ Launching a container
 ---------------------
 
 * Once the image is created, you may start a new Docker container using it.
-  In the following example, we will run a container named `sftpplus-instance`,
-  which is using the `sftpplus:3.44.0` image, and which makes all the ports
-  available to the outside world. There are a lot of services and ports::
+  In the following example, we run a container named `sftpplus-trial-instance`
+  using the `sftpplus:3.44.0.trial` image which publishes all its services
+  to the outside world. There are a lot of services and ports open by default::
 
-    docker run -d --name sftpplus-instance \
-        -p 10020:10020 \
-        -p 10080:10080 \
-        -p 10443:10443 \
-        -p 10022:10022 \
-        -p 10023:10023 \
-        -p 10021:10021 \
-        -p 10990:10990 \
-        -p 10900-10910:10900-10910 \
+    docker run --detach --name sftpplus-trial-instance \
+        --publish 10020:10020 \
+        --publish 10080:10080 \
+        --publish 10443:10443 \
+        --publish 10022:10022 \
+        --publish 10023:10023 \
+        --publish 10021:10021 \
+        --publish 10990:10990 \
+        --publish 10900-10910:10900-10910 \
         sftpplus:3.44.0.trial
 
 * You can check that the container is started with::
 
-    docker ps -a
+    docker ps --all
 
 * And check the logs with::
 
-    docker logs sftpplus-instance
-
-* And stop the container with::
-
-    docker stop sftpplus-instance
-
-* To check how the image is created, you can start with a shell to inspect it::
-
-    docker run -it --name sftpplus-debug sftpplus:3.44.0 /bin/sh
+    docker logs sftpplus-trial-instance
 
 * To inspect a container which is already running::
 
-    docker exec -it sftpplus-instance /bin/sh
+    docker exec --interactive --tty sftpplus-trial-instance /bin/sh
+
+* You can stop the container with::
+
+    docker stop sftpplus-trial-instance
+
+* And then remove it with::
+
+    docker rm sftpplus-trial-instance
+
+* To remove the trial image altogether::
+
+    docker rmi sftpplus:3.44.0.trial
 
 
 Issues and questions
 --------------------
 
 For discussions, issues, questions, etc. please create or use
-issues in this Github repo.
+issues in this GitHub repository.
 
 For contributions, please feel free to open new pull requests.
 
