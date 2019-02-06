@@ -4,17 +4,18 @@
 . /etc/os-release
 case ${ID} in
     rhel|centos)
-        # Get the OpenSSL library as this is the only dependency.
+        # Get the OpenSSL library, as this is the only dependency.
         yum check-update
         yum update openssl
         yum info openssl
         ;;
     debian)
+        # Get the OpenSSL library, as this is the only dependency missing.
         apt-get update
         apt-get install -y openssl
         ;;
     alpine)
-        # Get the libffi library as this is the only dependency missing.
+        # Get the libffi library, as this is the only dependency missing.
         apk update
         apk add libffi
         ;;
