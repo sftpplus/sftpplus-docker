@@ -32,11 +32,11 @@ EXPOSE 10020 10080 10443 10022 10023 10021 10990 10900-10910
 #
 
 # Add the files needed to customize the image.
-ADD sftpplus-${SFTPPLUS_OS}-x64-${SFTPPLUS_VERSION}.tar.gz sftpplus-docker-setup-${SFTPPLUS_OS}.sh /opt/
+ADD sftpplus-${SFTPPLUS_OS}-x64-${SFTPPLUS_VERSION}.tar.gz sftpplus-docker-setup.sh /opt/
 ADD configuration/ /opt/configuration/
 
 # Unpack the tarball and do the initial setup.
-RUN /opt/sftpplus-docker-setup-${SFTPPLUS_OS}.sh
+RUN /opt/sftpplus-docker-setup.sh
 
 # SFTPPlus install dir.
 WORKDIR /opt/sftpplus

@@ -1,12 +1,12 @@
 SFTPPlus Docker
 ===============
 
-This repository contains the `Dockerfile` and related files for creating Docker
+This repository contains a ``Dockerfile`` and related files for creating Docker
 containers running Pro:Atria's SFTPPlus Managed File Transfer for evaluation
 purposes.
 
-`sftpplus-docker-setup.sh` is the main script which is called to create the
-SFTPPlus environment for the image.
+``sftpplus-docker-setup.sh`` is the main script called to create the
+SFTPPlus environment for the Docker image.
 It does a standard SFTPPlus installation, generating new SSH keys each
 time the image is created.
 The FTPS and HTTPS services are using self-signed certificates.
@@ -14,54 +14,24 @@ The FTPS and HTTPS services are using self-signed certificates.
 This repository is provided as an evaluation tool and the base for creating a
 custom SFTPPlus Docker image to suit your production needs.
 
-A testing account named `test_user` and password `test_password` is created
+A testing account named ``test_user`` with password ``test_password`` is created
 by default.
-
-
-Image Customization
--------------------
-
-Since the default SSH keys and SSL certificates are automatically generated,
-the default `Dockerfile` presented here is not suitable for production.
-
-For production usage you should add your own SSH keys and SSL certificates to
-the `configuration/` subdirectory. Then modify `server.ini` to use these files.
-
-The default configuration will enable all the supported protocols and expose
-all the ports they require.
-You might want to disable / remove some of the services or map them to
-different ports.
-
-For production usage it is recommended to remove the `test_user` account.
-
-The logs produced by the server are sent to standard output, so that they
-are available through `docker log`.
-
-A copy of the logs is also stored in local files, which are rotated daily
-and kept for up to 30 days.
-If you are using exclusively the `docker log` infrastructure,
-you should disable local log files.
-
-For demonstration purposes, all events are also stored in an SQLite database,
-making them available through the Local Manager web console.
-In a production environment they can soon grow to a significant size,
-becoming a performance hit.
-It is recommended to either disable this or use an external MySQL database.
 
 
 Pre-requisites
 --------------
 
 We assume that you already have a working Docker environment.
-We used version `18.09.1`.
+We used version ``18.09.1``.
 
-You should have downloaded an SFTPPlus version,
+You should have downloaded an SFTPPlus installation package,
 either the trial or the full version.
 
-This repository contains example for the following operating systems:
+This repository contains examples for the following operating systems:
 
 * RHEL 7 / CentOS 7
 * Debian 8
+* Alpine 3.7
 
 
 Docker Image Creation
@@ -75,18 +45,19 @@ Docker Image Creation
 
     wget https://download.sftpplus.com/trial/sftpplus-rhel7-x64-trial.tar.gz
 
-* Edit the `configuration/server.ini` file to match your needs.
+* Edit the ``configuration/server.ini`` file to match your needs.
 
-* Adjust `SFTPPLUS_OS` and `SFTPPLUS_VERSION` in `Dockerfile`
+* Adjust ``SFTPPLUS_OS`` and ``SFTPPLUS_VERSION`` in ``Dockerfile``
   to match the downloaded version.
-  The default Dockerfile from this repo works with the SFTPPlus trial version.
+  The ``Dockerfile`` from this repository works with both the trial versions
+  and the full versions of SFTPPlus.
 
-* From inside the main directory build the `sftpplus` image with
-  (replace `3.44.0.trial` with your preferred tag)::
+* From inside the main directory, build the ``sftpplus`` image with
+  (replace ``3.44.0.trial`` with your preferred tag)::
 
-    docker build -t sftpplus:3.44.0.trial .
+    docker build --tag sftpplus:3.44.0.trial .
 
-* If successful, you should see the new available Docker image with::
+* If successful, the following should list the newly-available Docker image::
 
     docker images
 
@@ -94,50 +65,135 @@ Docker Image Creation
 Launching a container
 ---------------------
 
-* Once the image is created, you may start a new Docker container using it.
-  In the following example, we will run a container named `sftpplus-instance`,
-  which is using the `sftpplus:3.44.0` image, and which makes all the ports
-  available to the outside world. There are a lot of services and ports::
+* Once the image is created, you can start a new Docker container using it.
+  In the following example we run a container named ``sftpplus-trial-instance``
+  using the ``sftpplus:3.44.0.trial`` image which publishes all its services
+  to the outside world. There are a lot of services and ports open by default::
 
-    docker run -d --name sftpplus-instance \
-        -p 10020:10020 \
-        -p 10080:10080 \
-        -p 10443:10443 \
-        -p 10022:10022 \
-        -p 10023:10023 \
-        -p 10021:10021 \
-        -p 10990:10990 \
-        -p 10900-10910:10900-10910 \
+    docker run --detach --name sftpplus-trial-instance \
+        --publish 10020:10020 \
+        --publish 10080:10080 \
+        --publish 10443:10443 \
+        --publish 10022:10022 \
+        --publish 10023:10023 \
+        --publish 10021:10021 \
+        --publish 10990:10990 \
+        --publish 10900-10910:10900-10910 \
         sftpplus:3.44.0.trial
 
 * You can check that the container is started with::
 
-    docker ps -a
+    docker ps --all
 
-* And check the logs with::
+* And check its logs with::
 
-    docker logs sftpplus-instance
-
-* And stop the container with::
-
-    docker stop sftpplus-instance
-
-* To check how the image is created, you can start with a shell to inspect it::
-
-    docker run -it --name sftpplus-debug sftpplus:3.44.0 /bin/sh
+    docker logs sftpplus-trial-instance
 
 * To inspect a container which is already running::
 
-    docker exec -it sftpplus-instance /bin/sh
+    docker exec --interactive --tty sftpplus-trial-instance /bin/sh
+
+* You can stop the container with::
+
+    docker stop sftpplus-trial-instance
+
+* And then remove it with::
+
+    docker rm sftpplus-trial-instance
+
+* To remove the trial image altogether::
+
+    docker rmi sftpplus:3.44.0.trial
+
+
+Image Customization
+-------------------
+
+Since the default SSH keys and SSL certificates are automatically generated,
+the default ``Dockerfile`` presented here is not suitable for production.
+
+For production usage you should add your own SSH keys and SSL certificates to
+the ``configuration/`` subdirectory.
+Then modify ``server.ini`` to use these files.
+You can also include the contents of the certificates in the configuration file.
+
+The default configuration will enable all the supported protocols and expose
+all the ports they require.
+You might want to disable / remove some of the services, or map them to
+different ports.
+
+For production usage it is recommended to remove the ``test_user`` account.
+
+The logs produced by the server are sent to standard output, so that they
+are available through ``docker log``.
+
+A copy of the logs is also stored in local files, which are rotated daily
+and kept for up to 30 days.
+If you are using exclusively the ``docker log`` infrastructure,
+you should disable local log files.
+
+For demonstration purposes, all events are also stored in an SQLite database,
+making them available through the Local Manager web console.
+In a production environment they can soon grow to a significant size,
+becoming a performance hit.
+It is recommended to either disable this or use an external MySQL database.
+
+User data should be handled by a separate volume, outside of the container,
+mounted from the Docker host.
+This will allow the data to persist when the container no longer exists,
+and also ease access to the data outside of the container.
+For production usage, dedicated volumes should be used for user data.
+
+For example, for the above Docker image, let's create a dedicated volume
+before running it::
+
+    docker volume create sftpplus_trial_storage
+
+Then we should mount this to ``/srv/storage`` (as per the included configuration
+file) when running the container::
+
+    docker run --detach --name sftpplus-trial-instance \
+        --publish 10020:10020 \
+        --publish 10080:10080 \
+        --publish 10443:10443 \
+        --publish 10022:10022 \
+        --publish 10023:10023 \
+        --publish 10021:10021 \
+        --publish 10990:10990 \
+        --publish 10900-10910:10900-10910 \
+        --mount source=sftpplus_trial_storage,target=/srv/storage \
+        sftpplus:3.44.0.trial
+
+Use ``docker inspect sftpplus-trial-instance`` to verify that the volume
+was created and mounted correctly. Look for the ``Mounts`` section::
+
+    "Mounts": [
+        {
+            "Type": "volume",
+            "Name": "sftpplus_trial_storage",
+            "Source": "/var/lib/docker/volumes/sftpplus_trial_storage/_data",
+            "Destination": "/srv/storage",
+            "Driver": "local",
+            "Mode": "",
+            "RW": true,
+            "Propagation": ""
+        }
+    ],
+
+When you are done testing the trial container, after removing it,
+you can also delete the newly-created volume with::
+
+    docker volume rm sftpplus_trial_storage
 
 
 Issues and questions
 --------------------
 
-For discussions, issues and questions, please create and use issues and pull requests in the Github repo.
+For discussions, issues, questions, etc. please create or use
+issues in this GitHub repository.
 
-For contributions, please feel free to open a new pull request.
+For contributions, please feel free to open new pull requests.
 
-Website: https://www.sftpplus.com
+Website: https://www.sftpplus.com.
 
-SFTPPlus Documentation: https://www.sftpplus.com/documentation/sftpplus/latest/
+SFTPPlus Documentation: https://www.sftpplus.com/documentation/sftpplus/latest/.
