@@ -1,12 +1,12 @@
 SFTPPlus Docker
 ===============
 
-This repository contains the ``Dockerfile`` and related files for creating Docker
+This repository contains a ``Dockerfile`` and related files for creating Docker
 containers running Pro:Atria's SFTPPlus Managed File Transfer for evaluation
 purposes.
 
 ``sftpplus-docker-setup.sh`` is the main script called to create the
-SFTPPlus environment for the image.
+SFTPPlus environment for the Docker image.
 It does a standard SFTPPlus installation, generating new SSH keys each
 time the image is created.
 The FTPS and HTTPS services are using self-signed certificates.
@@ -49,14 +49,15 @@ Docker Image Creation
 
 * Adjust ``SFTPPLUS_OS`` and ``SFTPPLUS_VERSION`` in ``Dockerfile``
   to match the downloaded version.
-  The ``Dockerfile`` from this repo works with the SFTPPlus trial version too.
+  The ``Dockerfile`` from this repository works with both the trial versions
+  and the full versions of SFTPPlus.
 
 * From inside the main directory, build the ``sftpplus`` image with
   (replace ``3.44.0.trial`` with your preferred tag)::
 
     docker build --tag sftpplus:3.44.0.trial .
 
-* If successful, you should see the new available Docker image with::
+* If successful, the following should list the newly-available Docker image::
 
     docker images
 
@@ -64,7 +65,7 @@ Docker Image Creation
 Launching a container
 ---------------------
 
-* Once the image is created, you may start a new Docker container using it.
+* Once the image is created, you can start a new Docker container using it.
   In the following example we run a container named ``sftpplus-trial-instance``
   using the ``sftpplus:3.44.0.trial`` image which publishes all its services
   to the outside world. There are a lot of services and ports open by default::
@@ -84,7 +85,7 @@ Launching a container
 
     docker ps --all
 
-* And check the logs with::
+* And check its logs with::
 
     docker logs sftpplus-trial-instance
 
@@ -114,6 +115,7 @@ the default ``Dockerfile`` presented here is not suitable for production.
 For production usage you should add your own SSH keys and SSL certificates to
 the ``configuration/`` subdirectory.
 Then modify ``server.ini`` to use these files.
+You can also include the contents of the certificates in the configuration file.
 
 The default configuration will enable all the supported protocols and expose
 all the ports they require.
@@ -165,23 +167,23 @@ file) when running the container::
 Use ``docker inspect sftpplus-trial-instance`` to verify that the volume
 was created and mounted correctly. Look for the ``Mounts`` section::
 
-        "Mounts": [
-            {
-                "Type": "volume",
-                "Name": "sftpplus_trial_storage",
-                "Source": "/var/lib/docker/volumes/sftpplus_trial_storage/_data",
-                "Destination": "/srv/storage",
-                "Driver": "local",
-                "Mode": "",
-                "RW": true,
-                "Propagation": ""
-            }
-        ],
+    "Mounts": [
+        {
+            "Type": "volume",
+            "Name": "sftpplus_trial_storage",
+            "Source": "/var/lib/docker/volumes/sftpplus_trial_storage/_data",
+            "Destination": "/srv/storage",
+            "Driver": "local",
+            "Mode": "",
+            "RW": true,
+            "Propagation": ""
+        }
+    ],
 
 When you are done testing the trial container, after removing it,
 you can also delete the newly-created volume with::
 
-        docker volume rm sftpplus_trial_storage
+    docker volume rm sftpplus_trial_storage
 
 
 Issues and questions
