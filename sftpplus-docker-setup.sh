@@ -9,10 +9,10 @@ case ${ID} in
         yum update openssl
         yum info openssl
         ;;
-    debian)
-        # Get the OpenSSL library, as this is the only dependency missing.
+    ubuntu|debian)
+        # Get the OpenSSL and libffi libraries, the only dependencies.
         apt-get update
-        apt-get install -y openssl
+        apt-get install -y openssl libffi6
         ;;
     alpine)
         # Get the libffi library, as this is the only dependency missing.
