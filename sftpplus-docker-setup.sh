@@ -49,7 +49,7 @@ esac
 mv /opt/configuration/* /opt/sftpplus/configuration/
 rm -rf /opt/configuration
 
-# Create the basic storage folder for the test user.
+# Create the basic storage directory for the test user.
 mkdir -p /srv/storage/test_user
 
 # Adjust ownership of the configuration files and logs.

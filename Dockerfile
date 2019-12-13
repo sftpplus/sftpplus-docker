@@ -18,7 +18,7 @@ ENV SFTPPLUS_OS rhel7
 # For the non-trial package, this would be the version, eg. "3.51.0".
 ENV SFTPPLUS_VERSION trial
 
-# Inform docker about what ports are used by the application.
+# Inform Docker about the ports used by SFTPPlus.
 # * Local Manager
 # * HTTP / HTTPS file servers
 # * SFTP file server
@@ -36,7 +36,7 @@ EXPOSE 10020 10080 10443 10022 10023 10021 10990 10900-10910
 ADD sftpplus-${SFTPPLUS_OS}-x64-${SFTPPLUS_VERSION}.tar.gz sftpplus-docker-setup.sh /opt/
 ADD configuration/ /opt/configuration/
 
-# Unpack the tarball and do the initial setup.
+# Unpack the tarball and initialize setup.
 RUN /opt/sftpplus-docker-setup.sh
 
 # SFTPPlus install dir.
