@@ -9,10 +9,10 @@ case ${ID} in
         yum update openssl
         yum info openssl
         ;;
-    debian)
-        # Get the OpenSSL library, as this is the only dependency missing.
+    ubuntu|debian)
+        # Get the OpenSSL and libffi libraries, the only dependencies.
         apt-get update
-        apt-get install -y openssl
+        apt-get install -y openssl libffi6
         ;;
     alpine)
         # Get the libffi library, as this is the only dependency missing.
@@ -49,7 +49,7 @@ esac
 mv /opt/configuration/* /opt/sftpplus/configuration/
 rm -rf /opt/configuration
 
-# Create the basic storage folder for the test user.
+# Create the basic storage directory for the test user.
 mkdir -p /srv/storage/test_user
 
 # Adjust ownership of the configuration files and logs.
