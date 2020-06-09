@@ -12,11 +12,14 @@ case ${ID} in
     ubuntu|debian)
         # Get the OpenSSL and libffi libraries, the only dependencies.
         apt-get update
-        apt-get install -y openssl libffi6
+        apt-get install -y openssl libffi7
         ;;
     alpine)
+        # Update the already-included OpenSSL libs.
+        apk update
+        apk upgrade
         # Get the libffi library, as this is the only dependency missing.
-        apk add -U libffi
+        apk add libffi
         ;;
 esac
 
