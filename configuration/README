@@ -1,5 +1,5 @@
-The content of this directory will overwrite the SFTPPlus configuration folder
-produced after the SFTPPlus initialization.
+The content of this directory will overwrite the SFTPPlus configuration
+initialized from scratch.
 
-You can modify the server.ini to add your own users and your own certificates
-or SSH keys.
+Add here a custom server.ini to add your own users and your own
+SSL certificates and SSH keys to the SFTPPlus container.
