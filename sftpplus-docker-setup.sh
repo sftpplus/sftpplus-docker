@@ -30,7 +30,7 @@ ln -s sftpplus-${SFTPPLUS_OS}-x64-${SFTPPLUS_VERSION} sftpplus
 # Initialize SFTPPlus configuration.
 # This will generate the SSH keys and the self signed certificates.
 cd sftpplus
-./bin/admin-commands.sh initialize
+./bin/admin-commands.sh initialize --init-admin admin --init-password pass
 
 # Add default group and user.
 case ${ID} in
