@@ -4,18 +4,17 @@
 # Update the value from this section to match your needs.
 #
 # This Dockerfile was tested with the following upstream Docker images:
-# * centos:7
-# * ubuntu:18.04
-# * debian:9
+# * centos:8
+# * ubuntu:20.04
 # * alpine:3.10
-FROM centos:7
+FROM centos:8
 
 # Official Dockerfile for SFTPPlus.
 MAINTAINER support@sftpplus.com
 
-# SFTPPlus moniker for the current OS (rhel7, ubuntu1804, debian9, alpine310).
-ENV SFTPPLUS_OS rhel7
-# For the non-trial package, this would be the version, eg. "3.51.0".
+# SFTPPlus moniker for the current OS (rhel8, ubuntu2004, alpine310).
+ENV SFTPPLUS_OS rhel8
+# For the non-trial package, this would be the version, eg. "4.0.0".
 ENV SFTPPLUS_VERSION trial
 
 # Inform Docker about the ports used by SFTPPlus.
