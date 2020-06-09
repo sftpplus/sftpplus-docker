@@ -16,8 +16,7 @@ case ${ID} in
         ;;
     alpine)
         # Get the libffi library, as this is the only dependency missing.
-        apk update
-        apk add libffi
+        apk add -U libffi
         ;;
 esac
 
