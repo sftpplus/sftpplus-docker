@@ -17,14 +17,14 @@ custom SFTPPlus Docker image to suit your production needs.
 An administrator account named ``admin`` with password ``pass`` is created
 by default.
 The administrative web-based interface runs on port 10020, you should access it
-through your browser at https://DOCKER_IP:10020.
+through your browser at https://DOCKER_ADDRESS:10020.
 Make sure to update the default credentials before moving a SFTPPlus Docker
 image to production.
 
 For testing the services, a testing account named ``test_user`` with password
 ``test_password`` is created by default, but not enabled.
 To enable it, use the above administrative account to login through the
-administrative web-based interface and enable it in the ``Accounts`` section.
+administrative web-based interface, then edit it in the ``Accounts`` section.
 
 
 Pre-requisites
@@ -76,7 +76,7 @@ Launching a container
 
 * Once the image is created, you can start a new Docker container using it.
   In the following example, we run a container named ``sftpplus-trial-instance``
-  using the ``sftpplus:4.0.0.trial`` image, which publishes all its services
+  using the ``sftpplus:4.0.0.trial`` image, which publishes its default services
   to the outside world. There are a few standard ports open by default
   (for the administrative interface, HTTPS service, SSH service, explicit FTP
   service and its passive ports range respectively)::
@@ -125,8 +125,8 @@ own SSH keys and SSL certificates to the ``configuration/`` subdirectory.
 You can also include the contents of the certificates and keys in the
 configuration file.
 
-The default configuration will enable a number of supported protocols and expose
-all the ports they require.
+The default configuration only enables a number of supported protocols,
+exposing their required ports.
 You might want to disable / remove some of the services, or map them to
 different ports.
 
