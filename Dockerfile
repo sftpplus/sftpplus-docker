@@ -19,13 +19,11 @@ ENV SFTPPLUS_VERSION trial
 
 # Inform Docker about the ports used by SFTPPlus.
 # * Local Manager
-# * HTTP / HTTPS file servers
+# * HTTPS file servers
 # * SFTP file server
-# * SCP file server
 # * Explicit FTPS command port
-# * Implicit FTPS command port
-# * Implicit and Explicit FTPS passive data ports.
-EXPOSE 10020 10080 10443 10022 10023 10021 10990 10900-10910
+# * Explicit FTPS passive data ports.
+EXPOSE 10020 10443 10022 10021 10900-10910
 
 ###############################################################################
 # Build steps
