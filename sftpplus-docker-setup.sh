@@ -31,22 +31,26 @@ cd /opt
 ln -s sftpplus-${SFTPPLUS_OS}-x64-${SFTPPLUS_VERSION} sftpplus
 
 # A basic SFTPPlus configuration is picked up from configuration/, which
-# requires SSH keys and SSL certificates generated through the next step.
+# requires SSL certificates and SSH keys generated through the next step.
 mv /opt/configuration/* /opt/sftpplus/configuration/
 rm -rf /opt/configuration
 
-# Generate specific SSH keys and self-signed SSL certificates, as specified in
-# the included SFTPPlus configuration.
+# Generate self-signed SSL certificate and private SSH keys, as set in the
+# included SFTPPlus configuration.
 cd sftpplus
-./bin/admin-commands.sh generate-ssh-key \
-    --key-file=configuration/rsa_key \
-    --key-type=rsa \
-    --key-size=2048
 ./bin/admin-commands.sh generate-self-signed \
     --common-name=sftpplus-docker.example.com \
     --key-size=2048 \
     --sign-algorithm=sha256 \
-    > configuration/ssl_certs.pem
+    > configuration/self_signed_certificate.pem
+./bin/admin-commands.sh generate-ssh-key \
+    --key-file=configuration/ssh_host_rsa_key \
+    --key-type=rsa \
+    --key-size=2048
+./bin/admin-commands.sh generate-ssh-key \
+    --key-file=configuration/ssh_host_dsa_key \
+    --key-type=dsa \
+    --key-size=1024
 
 # Add default group and user.
 case ${ID} in
