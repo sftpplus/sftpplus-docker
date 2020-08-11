@@ -30,10 +30,23 @@ set -xe
 cd /opt
 ln -s sftpplus-${SFTPPLUS_OS}-x64-${SFTPPLUS_VERSION} sftpplus
 
-# Initialize SFTPPlus configuration.
-# This will generate the SSH keys and the self signed certificates.
+# A basic SFTPPlus configuration is picked up from configuration/, which
+# requires SSH keys and SSL certificates generated through the next step.
+mv /opt/configuration/* /opt/sftpplus/configuration/
+rm -rf /opt/configuration
+
+# Generate specific SSH keys and self-signed SSL certificates, as specified in
+# the included SFTPPlus configuration.
 cd sftpplus
-./bin/admin-commands.sh initialize --init-admin admin --init-password pass
+./bin/admin-commands.sh generate-ssh-key \
+    --key-file=configuration/rsa_key \
+    --key-type=rsa \
+    --key-size=2048
+./bin/admin-commands.sh generate-self-signed \
+    --common-name=sftpplus-docker.example.com \
+    --key-size=2048 \
+    --sign-algorithm=sha256 \
+    > configuration/ssl_certs.pem
 
 # Add default group and user.
 case ${ID} in
@@ -47,11 +60,7 @@ case ${ID} in
         ;;
 esac
 
-# Merge the configuration file and clean the source configuration.
-mv /opt/configuration/* /opt/sftpplus/configuration/
-rm -rf /opt/configuration
-
-# Create the basic storage directory for the test user.
+# Create the basic storage directory for the default-enabled test_user account.
 mkdir -p /srv/storage/test_user
 
 # Adjust ownership of the configuration files and logs.

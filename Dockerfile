@@ -39,7 +39,9 @@ RUN /opt/sftpplus-docker-setup.sh
 # SFTPPlus install dir.
 WORKDIR /opt/sftpplus
 
-# Start the server.
-# In debug mode all logs are sent to stdout, enabling Docker logs.
+# Start the server in foreground, to be managed by Docker.
+# To log to Docker only, the standard-stream event handler is enabled through
+# the default configuration file picked up from configuration/, which also
+# disables the default logging to file and SQLite database.
 USER sftpplus
-CMD [ "bin/admin-commands.sh", "debug" ]
+CMD [ "bin/admin-commands.sh", "start-in-foreground" ]

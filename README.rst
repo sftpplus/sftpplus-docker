@@ -14,17 +14,15 @@ The FTPS and HTTPS services are using self-signed certificates.
 This repository is provided as an evaluation tool and the base for creating a
 custom SFTPPlus Docker image to suit your production needs.
 
-An administrator account named ``admin`` with password ``pass`` is created
-by default.
+The default-included basic configuration enables an administrator account
+named ``admin`` with password ``pass``.
 The administrative web-based interface runs on port 10020, you should access it
 through your browser at https://DOCKER_ADDRESS:10020.
 Make sure to update the default credentials before moving a SFTPPlus Docker
 image to production.
 
 For testing the services, a testing account named ``test_user`` with password
-``test_password`` is created by default, but not enabled.
-To enable it, use the above administrative account to login through the
-administrative web-based interface, then edit it in the ``Accounts`` section.
+``test_password`` is created and enabled by default.
 
 
 Pre-requisites
@@ -39,7 +37,7 @@ This repository contains examples for the following operating systems:
 
 * RHEL 8 / CentOS 8
 * Ubuntu 20.04
-* Alpine 3.10
+* Alpine 3.12
 
 
 Docker Image Creation
@@ -53,7 +51,7 @@ Docker Image Creation
 
     wget https://download.sftpplus.com/trial/sftpplus-rhel8-x64-trial.tar.gz
 
-* Advanced users should add a ``configuration/server.ini`` file to match
+* Advanced users should edit the ``configuration/server.ini`` file to match
   their needs.
 
 * Adjust ``SFTPPLUS_OS`` and ``SFTPPLUS_VERSION`` in ``Dockerfile``
@@ -120,8 +118,9 @@ Image Customization
 Since the default SSH keys and SSL certificates are automatically generated,
 the default ``Dockerfile`` presented here is not suitable for production.
 
-For production usage, add a custom ``server.ini`` configuration file and your
-own SSH keys and SSL certificates to the ``configuration/`` subdirectory.
+For production usage, replace the default ``configuration/server.ini`` file
+and add your own SSH keys and SSL certificates to the ``configuration/``
+subdirectory.
 You can also include the contents of the certificates and keys in the
 configuration file.
 
@@ -130,20 +129,11 @@ exposing their required ports.
 You might want to disable / remove some of the services, or map them to
 different ports.
 
-For production usage, it is recommended to remove the ``test_user`` account.
+For production usage, it is recommended to update the password for the
+``admin`` account and remove the ``test_user`` account.
 
-The logs produced by the server are sent to standard output, so that they
-are available through ``docker log``.
-
-A copy of the logs is also stored in local files, which are rotated daily
-and kept for up to 30 days.
-If you are using exclusively the ``docker log`` infrastructure,
-you should disable local log files.
-
-For demonstration purposes, all events are also stored in an SQLite database,
-making them available through the Local Manager web console.
-In a production environment they can soon grow to a significant size,
-becoming a performance hit.
+The logs produced by the server are sent to standard output only, so that they
+are available through ``docker log``. All local logs are disabled.
 
 User data should be handled by a separate volume, outside of the container,
 mounted from the Docker host.
