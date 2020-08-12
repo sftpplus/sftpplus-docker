@@ -1,32 +1,30 @@
 ###############################################################################
-# Image configuration
+# Docker image configuration
 #
-# Update the value from this section to match your needs.
+# Update set values to match a customized SFTPPlus setup.
 #
-# This Dockerfile was tested with the following upstream Docker images:
-# * centos:7
-# * ubuntu:18.04
-# * debian:9
-# * alpine:3.10
-FROM centos:7
+# This Dockerfile is tested with the following upstream Docker images (but
+# works with others as well, as long as you use the right SFTPPlus package):
+# * centos:8
+# * ubuntu:20.04
+# * alpine:3.12
+FROM centos:8
 
 # Official Dockerfile for SFTPPlus.
 MAINTAINER support@sftpplus.com
 
-# SFTPPlus moniker for the current OS (rhel7, ubuntu1804, debian9, alpine310).
-ENV SFTPPLUS_OS rhel7
-# For the non-trial package, this would be the version, eg. "3.51.0".
+# SFTPPlus moniker for the current OS (e.g. "rhel8", "ubuntu2004", "alpine312").
+ENV SFTPPLUS_OS rhel8
+# For the non-trial package, this would be the version, eg. "4.0.0".
 ENV SFTPPLUS_VERSION trial
 
-# Inform Docker about the ports used by SFTPPlus.
+# Expose through Docker the ports used by SFTPPlus.
 # * Local Manager
-# * HTTP / HTTPS file servers
+# * HTTPS file servers
 # * SFTP file server
-# * SCP file server
 # * Explicit FTPS command port
-# * Implicit FTPS command port
-# * Implicit and Explicit FTPS passive data ports.
-EXPOSE 10020 10080 10443 10022 10023 10021 10990 10900-10910
+# * Explicit FTPS passive data ports.
+EXPOSE 10020 10443 10022 10021 10900-10910
 
 ###############################################################################
 # Build steps
@@ -42,7 +40,9 @@ RUN /opt/sftpplus-docker-setup.sh
 # SFTPPlus install dir.
 WORKDIR /opt/sftpplus
 
-# Start the server.
-# In debug mode all logs are sent to stdout, enabling Docker logs.
+# Start the server in foreground, to be managed by Docker.
+# To log to Docker only, the standard-stream event handler is enabled through
+# the default configuration file picked up from configuration/, which also
+# disables the default logging to file and SQLite database.
 USER sftpplus
-CMD [ "bin/admin-commands.sh", "debug" ]
+CMD [ "bin/admin-commands.sh", "start-in-foreground" ]

@@ -12,11 +12,13 @@ case ${ID} in
     ubuntu|debian)
         # Get the OpenSSL and libffi libraries, the only dependencies.
         apt-get update
-        apt-get install -y openssl libffi6
+        apt-get install -y openssl libffi7
         ;;
     alpine)
-        # Get the libffi library, as this is the only dependency missing.
+        # Update the already-included OpenSSL libs.
         apk update
+        apk upgrade
+        # Get the libffi library, as this is the only dependency missing.
         apk add libffi
         ;;
 esac
@@ -28,10 +30,27 @@ set -xe
 cd /opt
 ln -s sftpplus-${SFTPPLUS_OS}-x64-${SFTPPLUS_VERSION} sftpplus
 
-# Initialize SFTPPlus configuration.
-# This will generate the SSH keys and the self signed certificates.
+# A basic SFTPPlus configuration is picked up from configuration/, which
+# requires SSL certificates and SSH keys generated through the next step.
+mv /opt/configuration/* /opt/sftpplus/configuration/
+rm -rf /opt/configuration
+
+# Generate self-signed SSL certificate and private SSH keys, as set in the
+# included SFTPPlus configuration.
 cd sftpplus
-./bin/admin-commands.sh initialize
+./bin/admin-commands.sh generate-self-signed \
+    --common-name=sftpplus-docker.example.com \
+    --key-size=2048 \
+    --sign-algorithm=sha256 \
+    > configuration/self_signed_certificate.pem
+./bin/admin-commands.sh generate-ssh-key \
+    --key-file=configuration/ssh_host_rsa_key \
+    --key-type=rsa \
+    --key-size=2048
+./bin/admin-commands.sh generate-ssh-key \
+    --key-file=configuration/ssh_host_dsa_key \
+    --key-type=dsa \
+    --key-size=1024
 
 # Add default group and user.
 case ${ID} in
@@ -45,11 +64,7 @@ case ${ID} in
         ;;
 esac
 
-# Merge the configuration file and clean the source configuration.
-mv /opt/configuration/* /opt/sftpplus/configuration/
-rm -rf /opt/configuration
-
-# Create the basic storage directory for the test user.
+# Create the basic storage directory for the default-enabled test_user account.
 mkdir -p /srv/storage/test_user
 
 # Adjust ownership of the configuration files and logs.
