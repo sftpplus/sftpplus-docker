@@ -1,9 +1,10 @@
 ###############################################################################
-# Image configuration
+# Docker image configuration
 #
-# Update the value from this section to match your needs.
+# Update set values to match a customized SFTPPlus setup.
 #
-# This Dockerfile was tested with the following upstream Docker images:
+# This Dockerfile is tested with the following upstream Docker images (but
+# works with others as well, as long as you use the right SFTPPlus package):
 # * centos:8
 # * ubuntu:20.04
 # * alpine:3.12
@@ -12,12 +13,12 @@ FROM centos:8
 # Official Dockerfile for SFTPPlus.
 MAINTAINER support@sftpplus.com
 
-# SFTPPlus moniker for the current OS (rhel8, ubuntu2004, alpine312).
+# SFTPPlus moniker for the current OS (e.g. "rhel8", "ubuntu2004", "alpine312").
 ENV SFTPPLUS_OS rhel8
 # For the non-trial package, this would be the version, eg. "4.0.0".
 ENV SFTPPLUS_VERSION trial
 
-# Inform Docker about the ports used by SFTPPlus.
+# Expose through Docker the ports used by SFTPPlus.
 # * Local Manager
 # * HTTPS file servers
 # * SFTP file server

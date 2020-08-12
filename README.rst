@@ -95,6 +95,11 @@ Launching a container
 
     docker logs sftpplus-trial-instance
 
+If everything looks fine, you should be able to access the administrative
+web-based interface on port 10020, e.g. at https://DOCKER_ADDRESS:10020. Also,
+some services are enable by default, e.g. the HTTPS client at
+https://DOCKER_ADDRESS:10443.
+
 * To inspect a container which is already running::
 
     docker exec --interactive --tty sftpplus-trial-instance /bin/sh
