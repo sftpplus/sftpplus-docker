@@ -54,15 +54,23 @@ Docker Image Creation
 * Advanced users should edit the ``configuration/server.ini`` file to match
   their needs.
 
-* Adjust ``SFTPPLUS_OS`` and ``SFTPPLUS_VERSION`` in ``Dockerfile``
+* Adjust ``SFTPPLUS_PLATFORM`` and ``SFTPPLUS_VERSION`` in ``Dockerfile``
   to match the downloaded version.
   The ``Dockerfile`` from this repository works with both the trial versions
   and the full versions of SFTPPlus.
 
 * From inside the main directory, build the ``sftpplus`` image with
-  (replace ``4.0.0.trial`` with your preferred tag)::
+  (replace ``4.0.0.trial`` with your preferred tag).
+  This will create an Alpine based image by default::
 
     docker build --tag sftpplus:4.0.0.trial .
+
+* Optionally, you can use build arguments to target a specific OS::
+
+   docker build \
+    --build-arg "target_platform=ubuntu2004-x64" \
+    --build-arg "base_image=ubuntu:20.04" \
+    --tag sftpplus:4.0.0.trial .
 
 * If successful, the following should list the newly-available Docker image::
 
