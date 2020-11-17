@@ -205,4 +205,6 @@ Website: https://www.sftpplus.com.
 
 SFTPPlus Documentation: https://www.sftpplus.com/documentation/sftpplus/latest/.
 
-OpenShift Image Creation: https://docs.openshift.com/container-platform/4.6/openshift_images/create-images.html
+OpenShift Image Creation
+ * https://docs.openshift.com/container-platform/4.6/openshift_images/create-images.html
+ * https://developers.redhat.com/blog/2020/10/26/adapting-docker-and-kubernetes-containers-to-run-on-red-hat-openshift-container-platform/
