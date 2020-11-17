@@ -204,3 +204,5 @@ For contributions, please feel free to open new pull requests.
 Website: https://www.sftpplus.com.
 
 SFTPPlus Documentation: https://www.sftpplus.com/documentation/sftpplus/latest/.
+
+OpenShift Image Creation: https://docs.openshift.com/container-platform/4.6/openshift_images/create-images.html

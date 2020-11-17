@@ -8,11 +8,13 @@ case ${ID} in
         yum check-update
         yum update openssl
         yum info openssl
+        yum clean all -y
         ;;
     ubuntu|debian)
         # Get the OpenSSL and libffi libraries, the only dependencies.
         apt-get update
         apt-get install -y openssl libffi7
+        apt-get clean
         ;;
     alpine)
         # Update the already-included OpenSSL libs.
@@ -20,6 +22,8 @@ case ${ID} in
         apk upgrade
         # Get the libffi library, as this is the only dependency missing.
         apk add libffi
+        # Force cleaning the cache.
+        rm -f /var/cache/apk/*
         ;;
 esac
 
