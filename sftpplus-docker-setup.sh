@@ -68,7 +68,16 @@ esac
 mkdir -p /srv/storage/test_user
 
 # Adjust ownership of the configuration files and logs.
-chown -R sftpplus:sftpplus \
+chown -R sftpplus \
     /opt/sftpplus/configuration \
+    /opt/sftpplus/log \
+    /srv/storage
+
+# Add extra permissions for OpenShift Container Platform-specific guidelines.
+chgrp -R 0 /opt/sftpplus/configuration \
+    /opt/sftpplus/log \
+    /srv/storage
+
+chmod -R g=u /opt/sftpplus/configuration \
     /opt/sftpplus/log \
     /srv/storage

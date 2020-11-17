@@ -30,12 +30,14 @@ ENV SFTPPLUS_VERSION trial
 
 # Official Dockerfile for SFTPPlus.
 MAINTAINER support@sftpplus.com
+
 # Expose through Docker the ports used by SFTPPlus.
 # * Local Manager
 # * HTTPS file servers
 # * SFTP file server
 # * Explicit FTPS command port
 # * Explicit FTPS passive data ports.
+# When targeting OpenShift make sure all ports are above 1024.
 EXPOSE 10020 10443 10022 10021 10900-10910
 
 ###############################################################################
@@ -52,9 +54,12 @@ RUN /opt/sftpplus-docker-setup.sh
 # SFTPPlus install dir.
 WORKDIR /opt/sftpplus
 
+# The Dockerfile USER instruction is ignored on OpneShift, where a different
+# arbitrary user ID is used for each container
+USER sftpplus
+
 # Start the server in foreground, to be managed by Docker.
 # To log to Docker only, the standard-stream event handler is enabled through
 # the default configuration file picked up from configuration/, which also
 # disables the default logging to file and SQLite database.
-USER sftpplus
 CMD [ "bin/admin-commands.sh", "start-in-foreground" ]
