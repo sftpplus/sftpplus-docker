@@ -32,7 +32,7 @@ set -xe
 
 # Link the unpacked sub-dir as /opt/sftpplus.
 cd /opt
-ln -s sftpplus-${SFTPPLUS_PLATFORM}-${SFTPPLUS_VERSION} sftpplus
+ln -s sftpplus-${SFTPPLUS_PLATFORM}-* sftpplus
 
 # A basic SFTPPlus configuration is picked up from configuration/, which
 # requires SSL certificates and SSH keys generated through the next step.
