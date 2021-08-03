@@ -9,8 +9,8 @@
 # * ubuntu:20.04
 # * alpine:3.12
 
-ARG base_image="alpine:3.12"
-ARG target_platform=alpine312-x64
+ARG base_image="ubuntu:20.04"
+ARG target_platform=ubuntu2004-x64
 
 ###############################################################################
 # Image details
@@ -45,7 +45,7 @@ EXPOSE 10020 10443 10022 10021 10900-10910
 #
 
 # Add the files needed to customize the image.
-ADD sftpplus-${SFTPPLUS_PLATFORM}-${SFTPPLUS_VERSION}.tar.gz sftpplus-docker-setup.sh /opt/
+ADD sftpplus-${SFTPPLUS_PLATFORM}-${SFTPPLUS_VERSION}.tar.gz sftpplus-docker-setup.sh sftpplus-docker-entrypoint.sh /opt/
 ADD configuration/ /opt/configuration/
 
 # Unpack the tarball and initialize setup.
@@ -54,7 +54,7 @@ RUN /opt/sftpplus-docker-setup.sh
 # SFTPPlus install dir.
 WORKDIR /opt/sftpplus
 
-# The Dockerfile USER instruction is ignored on OpneShift, where a different
+# The Dockerfile USER instruction is ignored on OpenShift, where a different
 # arbitrary user ID is used for each container
 USER sftpplus
 
@@ -62,4 +62,4 @@ USER sftpplus
 # To log to Docker only, the standard-stream event handler is enabled through
 # the default configuration file picked up from configuration/, which also
 # disables the default logging to file and SQLite database.
-CMD [ "bin/admin-commands.sh", "start-in-foreground" ]
+CMD [ "/bin/sh", "/opt/sftpplus-docker-entrypoint.sh" ]

@@ -13,7 +13,20 @@ case ${ID} in
     ubuntu|debian)
         # Get the OpenSSL and libffi libraries, the only dependencies.
         apt-get update
-        apt-get install -y openssl libffi7
+        apt-get install -fy openssl libffi7 fuse wget s3fs
+
+        #apt-get install -fy software-properties-common
+        #echo "deb http://packages.cloud.google.com/apt gcsfuse-focal main" > /etc/apt/sources.list.d/gcsfuse.list
+        #curl -L https://packages.cloud.google.com/apt/doc/apt-key.gpg -o repo.key
+        #apt-key add repo.key
+        #rm repo.key
+        #apt-get update
+        #apt-get install -y gcsfuse
+
+        # Download the file from GitHub and then fix the dependencies
+        wget -q https://github.com/GoogleCloudPlatform/gcsfuse/releases/download/v0.35.1/gcsfuse_0.35.1_amd64.deb
+        dpkg -i gcsfuse*.deb
+        apt --fix-broken install
         apt-get clean
         ;;
     alpine)
@@ -70,6 +83,8 @@ esac
 
 # Create the basic storage directory for the default-enabled test_user account.
 mkdir -p /srv/storage/test_user
+
+chmod +x /opt/sftpplus-docker-entrypoint.sh
 
 # Adjust ownership of the configuration files and logs.
 chown -R sftpplus \
