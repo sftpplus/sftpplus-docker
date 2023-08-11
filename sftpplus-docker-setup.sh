@@ -88,4 +88,4 @@ chmod -R g=u /opt/sftpplus/configuration \
 
 # Just to troubleshoot and check the permisisons are set ok at the
 # end of the run.
-ls -al /opt/sfpplus
+ls -al /opt/sftpplus
