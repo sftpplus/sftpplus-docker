@@ -85,3 +85,7 @@ chgrp -R 0 /opt/sftpplus/configuration \
 chmod -R g=u /opt/sftpplus/configuration \
     /opt/sftpplus/log \
     /srv/storage
+
+# Just to troubleshoot and check the permisisons are set ok at the
+# end of the run.
+ls -al /opt/sfpplus

@@ -50,6 +50,8 @@ ADD configuration/ /opt/configuration/
 
 # Unpack the tarball and initialize setup.
 RUN /opt/sftpplus-docker-setup.sh
+RUN ls -al /opt/sftpplus
+
 
 # SFTPPlus install dir.
 WORKDIR /opt/sftpplus

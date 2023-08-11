@@ -49,7 +49,7 @@ Docker Image Creation
   The following example uses the link for the RHEL 8 / CentOS 8 trial,
   but you can replace it with your full version download link::
 
-    wget https://download.sftpplus.com/trial/sftpplus-rhel8-x64-trial.tar.gz
+    wget https://download.sftpplus.com/trial/sftpplus-ubuntu2004-x64-trial.tar.gz
 
 * Advanced users should edit the ``configuration/server.ini`` file to match
   their needs.
