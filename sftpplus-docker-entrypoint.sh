@@ -7,18 +7,22 @@ if [ -f "${SFTPPLUS_CONFIGURATION}/server.ini" ]; then
     echo "Configuration directory already initialized."
 else
   echo "Initializing the configuration"
+  mkdir -p ${SFTPPLUS_CONFIGURATION}
   cp /opt/sftpplus/configuration/server.ini.seed ${SFTPPLUS_CONFIGURATION}/server.ini
   ./bin/admin-commands.sh generate-self-signed \
     --common-name=sftpplus-docker.example.com \
     --key-size=2048 \
     --sign-algorithm=sha256 \
-    > configuration/ssl_certificate.pem
+    > ${SFTPPLUS_CONFIGURATION}/ssl_certificate.pem
   ./bin/admin-commands.sh generate-ssh-key \
-    --key-file=configuration/ssh_host_keys \
+    --key-file=${SFTPPLUS_CONFIGURATION}/ssh_host_keys \
     --key-type=rsa \
     --key-size=2048
+  # Cleanup public key as we don't need it.
+  rm ${SFTPPLUS_CONFIGURATION}/ssh_host_keys.pub
 fi
 
 echo "Starting using configuration from: $SFTPPLUS_CONFIGURATION"
-cd /opt/sftpplus
-./bin/admin-commands.sh start-in-foreground --config="$SFTPPLUS_CONFIGURATION/server.ini"
+cd ${SFTPPLUS_CONFIGURATION}/../
+/opt/sftpplus/bin/admin-commands.sh start-in-foreground \
+  --config="$SFTPPLUS_CONFIGURATION/server.ini"

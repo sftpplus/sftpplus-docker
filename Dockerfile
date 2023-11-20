@@ -11,6 +11,15 @@
 # * alpine:3.16
 ARG base_image=ubuntu:22.04
 ARG target_platform=lnx-x64
+################################################################################
+# Image details
+#
+
+FROM $base_image
+# Need to repeat them to be available after FROM
+# See https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
+ARG base_image
+ARG target_platform
 
 # SFTPPlus moniker for the current OS (e.g. "rhel8-x64", "ubuntu2004-x64", "alpine312-x64").
 ENV SFTPPLUS_PLATFORM $target_platform
