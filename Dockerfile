@@ -7,20 +7,10 @@
 # works with others as well, as long as you use the right SFTPPlus package):
 # * centos:8
 # * ubuntu:20.04
-# * alpine:3.12
-
-ARG base_image="ubuntu:20.04"
-ARG target_platform=ubuntu2004-x64
-
-###############################################################################
-# Image details
-#
-
-FROM $base_image
-# Need to repeat them to be available after FROM
-# See https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
-ARG base_image
-ARG target_platform
+# * ubuntu:22:04
+# * alpine:3.16
+ARG base_image=ubuntu:22.04
+ARG target_platform=lnx-x64
 
 # SFTPPlus moniker for the current OS (e.g. "rhel8-x64", "ubuntu2004-x64", "alpine312-x64").
 ENV SFTPPLUS_PLATFORM $target_platform

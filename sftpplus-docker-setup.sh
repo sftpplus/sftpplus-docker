@@ -1,4 +1,4 @@
-# To be used with the SFTPPlus Dockerfile.
+# To be used with the SFTPPlus Dockerfile for cloud deployment
 
 # Get relevant deps per distribution installed.
 . /etc/os-release
@@ -13,20 +13,7 @@ case ${ID} in
     ubuntu|debian)
         # Get the OpenSSL and libffi libraries, the only dependencies.
         apt-get update
-        apt-get install -fy openssl libffi7 fuse wget s3fs
-
-        #apt-get install -fy software-properties-common
-        #echo "deb http://packages.cloud.google.com/apt gcsfuse-focal main" > /etc/apt/sources.list.d/gcsfuse.list
-        #curl -L https://packages.cloud.google.com/apt/doc/apt-key.gpg -o repo.key
-        #apt-key add repo.key
-        #rm repo.key
-        #apt-get update
-        #apt-get install -y gcsfuse
-
-        # Download the file from GitHub and then fix the dependencies
-        wget -q https://github.com/GoogleCloudPlatform/gcsfuse/releases/download/v0.35.1/gcsfuse_0.35.1_amd64.deb
-        dpkg -i gcsfuse*.deb
-        apt --fix-broken install
+        apt-get install -y openssl libffi7
         apt-get clean
         ;;
     alpine)
@@ -52,34 +39,8 @@ mv sftpplus-${SFTPPLUS_PLATFORM}-* sftpplus
 mv /opt/configuration/* /opt/sftpplus/configuration/
 rm -rf /opt/configuration
 
-# Generate self-signed SSL certificate and private SSH keys, as set in the
-# included SFTPPlus configuration.
-cd sftpplus
-./bin/admin-commands.sh generate-self-signed \
-    --common-name=sftpplus-docker.example.com \
-    --key-size=2048 \
-    --sign-algorithm=sha256 \
-    > configuration/self_signed_certificate.pem
-./bin/admin-commands.sh generate-ssh-key \
-    --key-file=configuration/ssh_host_rsa_key \
-    --key-type=rsa \
-    --key-size=2048
-./bin/admin-commands.sh generate-ssh-key \
-    --key-file=configuration/ssh_host_dsa_key \
-    --key-type=dsa \
-    --key-size=1024
-
-# Add default group and user.
-case ${ID} in
-    alpine)
-        addgroup sftpplus
-        adduser -G sftpplus -g "SFTPPlus" -s /bin/false -h /dev/null -H -D sftpplus
-        ;;
-    *)
-        groupadd sftpplus
-        useradd -g sftpplus -c "SFTPPlus" -s /bin/false -d /dev/null -M sftpplus
-        ;;
-esac
+groupadd sftpplus
+useradd -g sftpplus -c "SFTPPlus" -s /bin/false -d /dev/null -M sftpplus
 
 # Create the basic storage directory for the default-enabled test_user account.
 mkdir -p /srv/storage/test_user
@@ -104,3 +65,5 @@ chmod -R g=u /opt/sftpplus/configuration \
 # Just to troubleshoot and check the permisisons are set ok at the
 # end of the run.
 ls -al /opt/sftpplus/
+# Also show the ID of the sftpplus user.
+id sftpplus

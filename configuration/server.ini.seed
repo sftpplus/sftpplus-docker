@@ -35,12 +35,8 @@ password_minimum_length = 8
 password_hashing_scheme = crypt-sha512
 
 ; Self-signed SSL certificate and private SSH keys to be generated.
-ssl_certificate = configuration/self_signed_certificate.pem
-rsa_private_key = configuration/ssh_host_rsa_key
-dsa_private_key = configuration/ssh_host_dsa_key
-
-
-[remote_admin]
+ssl_certificate = configuration/ssl_certificate.pem
+ssh_host_keys = configuration/ssh_host_keys
 
 
 [authentications/DEFAULT-AUTHENTICATION]

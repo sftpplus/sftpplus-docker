@@ -1,5 +1,5 @@
-SFTPPlus Docker
-===============
+SFTPPlus Docker example
+=======================
 
 This repository contains a ``Dockerfile`` and related files for creating Docker
 containers running Pro:Atria's SFTPPlus Managed File Transfer for evaluation
@@ -36,8 +36,8 @@ either the trial or the full version.
 This repository contains examples for the following operating systems:
 
 * RHEL 8 / CentOS 8
-* Ubuntu 20.04
-* Alpine 3.12
+* Ubuntu 20.04 / Ubuntu 22.04
+* Alpine 3.16
 
 
 Docker Image Creation
