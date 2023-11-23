@@ -46,10 +46,10 @@ Docker Image Creation
 * Clone this repository.
 
 * Get your preferred SFTPPlus version.
-  The following example uses the link for the RHEL 8 / CentOS 8 trial,
+  The following example uses the link for the generic Linux trial,
   but you can replace it with your full version download link::
 
-    wget https://download.sftpplus.com/trial/sftpplus-ubuntu2004-x64-trial.tar.gz
+    wget https://download.sftpplus.com/trial/sftpplus-lnx-x64-trial.tar.gz
 
 * Advanced users should edit the ``configuration/server.ini`` file to match
   their needs.
@@ -61,15 +61,16 @@ Docker Image Creation
 
 * From inside the main directory, build the ``sftpplus`` image with
   (replace ``4.0.0.trial`` with your preferred tag).
-  This will create an Alpine based image by default::
+  This will create an Ubuntu based image by default::
 
     docker build --tag sftpplus:4.0.0.trial .
 
 * Optionally, you can use build arguments to target a specific OS::
 
    docker build \
-    --build-arg "target_platform=ubuntu2004-x64" \
-    --build-arg "base_image=ubuntu:20.04" \
+    --build-arg "target_platform=lnx-x64" \
+    --build-arg "base_image=ubuntu:22.04" \
+    --build-arg "sftpplus_version=trial" \
     --tag sftpplus:4.0.0.trial .
 
 * If successful, the following should list the newly-available Docker image::
@@ -93,7 +94,7 @@ Launching a container
         --publish 10022:10022 \
         --publish 10021:10021 \
         --publish 10900-10910:10900-10910 \
-        sftpplus:4.0.0.trial
+        sftpplus:test.trial
 
 * You can check that the container is started with::
 

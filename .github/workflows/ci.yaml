@@ -1,0 +1,133 @@
+#
+# Actions executed on GitHub VMs.
+#
+#
+name: web
+
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+
+
+concurrency:
+  group: web-${{ github.ref }}
+  cancel-in-progress: true
+
+
+env:
+  DOCKER_HOST: 'disabled'
+  DEBIAN_FRONTEND: noninteractive
+  CI: 'true'
+  USER: 'runner'
+
+
+jobs:
+
+  image-build:
+    runs-on: ubuntu-22.04
+    name: ${{ matrix.test.platform }} - ${{ matrix.tests }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        test:
+          - platform: lnx-64
+            base_image: ubuntu:22.04
+        test:
+          - platform: rhel4-64
+            base_image: centos:8
+
+    steps:
+
+    - uses: actions/checkout@v3
+
+    - name: Get SFTPPlus software and test tools.
+      run: |
+        sudo apt-get update
+        sudo apt-get install putty
+        curl -LO https://download.sftpplus.com/trial/sftpplus-${{ matrix.test.platform }}-trial.tar.gz
+
+    - name: Build image
+      timeout-minutes: 10
+      run: |
+        docker build \
+          --build-arg "target_platform=${{ matrix.test.platform }}" \
+          --build-arg "base_image=${{ matrix.test.base_image }}" \
+          --build-arg "sftpplus_version=trial" \
+          --tag sftpplus:gha-ci .
+
+    - name: Start the container
+      timeout-minutes: 10
+      run: |
+        docker run --detach --name sftpplus-trial-instance \
+        --publish 10020:10020 \
+        --publish 10443:10443 \
+        --publish 10022:10022 \
+        --publish 10021:10021 \
+        --publish 10900-10910:10900-10910 \
+        sftpplus:gha-ci
+
+    - name: Test HTTPS
+      timeout-minutes: 10
+      run: |
+        curl -k https://localhost:10020
+        curl -k https://localhost:10443/home/
+
+        # HTTPS session login.
+        curl -k --data 'username=test_user' --data 'password=test_password' \
+          -H 'Accept: application/json' \
+          https://localhost:10443/__chsps__/login
+
+        # REST basic-auth upload
+        curl -k -T README.rst https://test_user:test_password@docker.chevah.com:10443/home/README.rst
+
+        # REST file download
+        curl -k  https://test_user:test_password@docker.chevah.com:10443/home/README.rst -o test-download.txt
+        cmp --silent README.rst test-download.txt
+        rm test-download.txt
+
+    - name: Test FTPS
+      timeout-minutes: 10
+      run: |
+        # FTP login dir listing
+        curl -k --ftp-ssl ftp://test_user:test_password@docker.chevah.com:10021
+        # FTPS upload
+        curl -k --ftp-ssl  -T README.rst ftp://test_user:test_password@docker.chevah.com:10021
+        # FTPS download
+        curl -k --ftp-ssl ftp://test_user:test_password@docker.chevah.com:10021/README.rst -o test-download.rst
+        cmp --silent README.rst test-download.txt
+        rm test-download.txt
+
+    - name: Test SFTP
+      timeout-minutes: 10
+      run: |
+        # SFTP login and upload
+        echo -n "test_password" > pwfile
+        echo y | pscp -sftp -P 10022 -l test_user -pwfile pwfile README.rst docker.chevah.com:README.rst
+        # SFTP download
+        pscp -sftp -P 10022 -l test_user -pwfile pwfile docker.chevah.com:README.rst test-download.rst
+        cmp --silent README.rst test-download.txt
+        rm test-download.txt
+
+
+  # Helper so that on GitHub repo settings we can configure a single job as
+  # required.
+  ci-required:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    if:  ${{ !cancelled() }}
+    needs:
+      - image-build
+    steps:
+      - name: Require all successes
+        shell: python3 {0}
+        env:
+          RESULTS: ${{ toJSON(needs.*.result) }}
+        run: |
+          import json
+          import os
+          import sys
+          results = json.loads(os.environ["RESULTS"])
+          sys.exit(0 if all(result == "success" for result in results) else 1)
