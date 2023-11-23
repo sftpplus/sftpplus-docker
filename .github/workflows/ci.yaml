@@ -32,9 +32,9 @@ jobs:
       fail-fast: false
       matrix:
         test:
-          - platform: lnx-64
+          - platform: lnx-x64
             base_image: ubuntu:22.04
-          - platform: rhel4-64
+          - platform: rhel4-x64
             base_image: centos:8
 
     steps:
@@ -46,6 +46,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install putty
         curl -LO https://download.sftpplus.com/trial/sftpplus-${{ matrix.test.platform }}-trial.tar.gz
+        la
 
     - name: Build image
       timeout-minutes: 10
