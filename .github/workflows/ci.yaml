@@ -2,7 +2,7 @@
 # Actions executed on GitHub VMs.
 #
 #
-name: web
+name: ci
 
 
 on:
@@ -12,12 +12,11 @@ on:
 
 
 concurrency:
-  group: web-${{ github.ref }}
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 
 env:
-  DOCKER_HOST: 'disabled'
   DEBIAN_FRONTEND: noninteractive
   CI: 'true'
   USER: 'runner'
@@ -27,7 +26,7 @@ jobs:
 
   image-build:
     runs-on: ubuntu-22.04
-    name: ${{ matrix.test.platform }} - ${{ matrix.tests }}
+    name: ${{ matrix.test.platform }} - ${{ matrix.test.base_image }}
     timeout-minutes: 60
     strategy:
       fail-fast: false
