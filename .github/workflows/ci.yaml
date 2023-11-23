@@ -46,7 +46,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install putty
         curl -LO https://download.sftpplus.com/trial/sftpplus-${{ matrix.test.platform }}-trial.tar.gz
-        la
+        ls -al
 
     - name: Build image
       timeout-minutes: 10
