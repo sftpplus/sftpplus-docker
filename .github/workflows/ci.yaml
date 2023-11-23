@@ -34,7 +34,7 @@ jobs:
         test:
           - platform: lnx-x64
             base_image: ubuntu:22.04
-          - platform: rhel4-x64
+          - platform: rhel8-x64
             base_image: centos:8
 
     steps:
@@ -67,6 +67,15 @@ jobs:
         --publish 10021:10021 \
         --publish 10900-10910:10900-10910 \
         sftpplus:gha-ci
+
+    - name: Wait container start
+      timeout-minutes: 1
+      run: |
+        sleep 1
+        until $(curl --output /dev/null -k --silent --head --fail http://localhost:10020); do
+            printf 'Port 10020 not yet ready. Waiting 5 seconds.'
+            sleep 5
+        done
 
     - name: Test HTTPS
       timeout-minutes: 10
