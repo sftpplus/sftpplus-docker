@@ -1,5 +1,5 @@
-SFTPPlus Docker
-===============
+SFTPPlus Docker example
+=======================
 
 This repository contains a ``Dockerfile`` and related files for creating Docker
 containers running Pro:Atria's SFTPPlus Managed File Transfer for evaluation
@@ -36,8 +36,8 @@ either the trial or the full version.
 This repository contains examples for the following operating systems:
 
 * RHEL 8 / CentOS 8
-* Ubuntu 20.04
-* Alpine 3.12
+* Ubuntu 20.04 / Ubuntu 22.04
+* Alpine 3.16
 
 
 Docker Image Creation
@@ -46,10 +46,10 @@ Docker Image Creation
 * Clone this repository.
 
 * Get your preferred SFTPPlus version.
-  The following example uses the link for the RHEL 8 / CentOS 8 trial,
+  The following example uses the link for the generic Linux trial,
   but you can replace it with your full version download link::
 
-    wget https://download.sftpplus.com/trial/sftpplus-ubuntu2004-x64-trial.tar.gz
+    wget https://download.sftpplus.com/trial/sftpplus-lnx-x64-trial.tar.gz
 
 * Advanced users should edit the ``configuration/server.ini`` file to match
   their needs.
@@ -61,15 +61,16 @@ Docker Image Creation
 
 * From inside the main directory, build the ``sftpplus`` image with
   (replace ``4.0.0.trial`` with your preferred tag).
-  This will create an Alpine based image by default::
+  This will create an Ubuntu based image by default::
 
     docker build --tag sftpplus:4.0.0.trial .
 
 * Optionally, you can use build arguments to target a specific OS::
 
    docker build \
-    --build-arg "target_platform=ubuntu2004-x64" \
-    --build-arg "base_image=ubuntu:20.04" \
+    --build-arg "target_platform=lnx-x64" \
+    --build-arg "base_image=ubuntu:22.04" \
+    --build-arg "sftpplus_version=trial" \
     --tag sftpplus:4.0.0.trial .
 
 * If successful, the following should list the newly-available Docker image::
@@ -81,13 +82,13 @@ Launching a container
 ---------------------
 
 * Once the image is created, you can start a new Docker container using it.
-  In the following example, we run a container named ``sftpplus-trial-instance``
+  In the following example, we run a container named ``sftpplus-trial``
   using the ``sftpplus:4.0.0.trial`` image, which publishes its default services
   to the outside world. There are a few standard ports open by default
   (for the administrative interface, HTTPS service, SSH service, explicit FTP
   service and its passive ports range respectively)::
 
-    docker run --detach --name sftpplus-trial-instance \
+    docker run --detach --name sftpplus-trial \
         --publish 10020:10020 \
         --publish 10443:10443 \
         --publish 10022:10022 \
@@ -101,7 +102,7 @@ Launching a container
 
 * And check its logs with::
 
-    docker logs sftpplus-trial-instance
+    docker logs sftpplus-trial
 
 If everything looks fine, you should be able to access the administrative
 web-based interface on port 10020, e.g. at https://DOCKER_ADDRESS:10020. Also,
@@ -110,15 +111,15 @@ https://DOCKER_ADDRESS:10443.
 
 * To inspect a container which is already running::
 
-    docker exec --interactive --tty sftpplus-trial-instance /bin/sh
+    docker exec --interactive --tty sftpplus-trial /bin/sh
 
 * You can stop the container with::
 
-    docker stop sftpplus-trial-instance
+    docker stop sftpplus-trial
 
 * And then remove it with::
 
-    docker rm sftpplus-trial-instance
+    docker rm sftpplus-trial
 
 * To remove the trial image altogether::
 
@@ -162,7 +163,7 @@ before running it::
 Then we should mount this to ``/srv/storage`` (as per the included configuration
 file) when running the container::
 
-    docker run --detach --name sftpplus-trial-instance \
+    docker run --detach --name sftpplus-trial \
         --publish 10020:10020 \
         --publish 10443:10443 \
         --publish 10022:10022 \
@@ -171,7 +172,7 @@ file) when running the container::
         --mount source=sftpplus_trial_storage,target=/srv/storage \
         sftpplus:4.0.0.trial
 
-Use ``docker inspect sftpplus-trial-instance`` to verify that the volume
+Use ``docker inspect sftpplus-trial`` to verify that the volume
 was created and mounted correctly. Look for the ``Mounts`` section::
 
     "Mounts": [

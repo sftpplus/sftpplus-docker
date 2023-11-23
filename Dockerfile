@@ -7,12 +7,11 @@
 # works with others as well, as long as you use the right SFTPPlus package):
 # * centos:8
 # * ubuntu:20.04
-# * alpine:3.12
+# * ubuntu:22:04
+# * alpine:3.16
+ARG base_image=ubuntu:22.04
 
-ARG base_image="alpine:3.12"
-ARG target_platform=alpine312-x64
-
-###############################################################################
+################################################################################
 # Image details
 #
 
@@ -20,13 +19,14 @@ FROM $base_image
 # Need to repeat them to be available after FROM
 # See https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 ARG base_image
-ARG target_platform
+ARG target_platform=lnx-x64
+ARG sftpplus_version=trial
 
 # SFTPPlus moniker for the current OS (e.g. "rhel8-x64", "ubuntu2004-x64", "alpine312-x64").
 ENV SFTPPLUS_PLATFORM $target_platform
 
 # For the non-trial package, this would be the version, eg. "4.0.0".
-ENV SFTPPLUS_VERSION trial
+ENV SFTPPLUS_VERSION $sftpplus_version
 
 # Official Dockerfile for SFTPPlus.
 MAINTAINER support@sftpplus.com
@@ -45,7 +45,7 @@ EXPOSE 10020 10443 10022 10021 10900-10910
 #
 
 # Add the files needed to customize the image.
-ADD sftpplus-${SFTPPLUS_PLATFORM}-${SFTPPLUS_VERSION}.tar.gz sftpplus-docker-setup.sh /opt/
+ADD sftpplus-${SFTPPLUS_PLATFORM}-${SFTPPLUS_VERSION}.tar.gz sftpplus-docker-setup.sh sftpplus-docker-entrypoint.sh /opt/
 ADD configuration/ /opt/configuration/
 
 # Unpack the tarball and initialize setup.
@@ -56,7 +56,7 @@ RUN ls -al /opt/sftpplus/
 # SFTPPlus install dir.
 WORKDIR /opt/sftpplus
 
-# The Dockerfile USER instruction is ignored on OpneShift, where a different
+# The Dockerfile USER instruction is ignored on OpenShift, where a different
 # arbitrary user ID is used for each container
 USER sftpplus
 
@@ -64,4 +64,4 @@ USER sftpplus
 # To log to Docker only, the standard-stream event handler is enabled through
 # the default configuration file picked up from configuration/, which also
 # disables the default logging to file and SQLite database.
-CMD [ "bin/admin-commands.sh", "start-in-foreground" ]
+CMD [ "/bin/sh", "/opt/sftpplus-docker-entrypoint.sh" ]

@@ -35,12 +35,8 @@ password_minimum_length = 8
 password_hashing_scheme = crypt-sha512
 
 ; Self-signed SSL certificate and private SSH keys to be generated.
-ssl_certificate = configuration/self_signed_certificate.pem
-rsa_private_key = configuration/ssh_host_rsa_key
-dsa_private_key = configuration/ssh_host_dsa_key
-
-
-[remote_admin]
+ssl_certificate = configuration/ssl_certificate.pem
+ssh_host_private_keys = configuration/ssh_host_keys
 
 
 [authentications/DEFAULT-AUTHENTICATION]
@@ -129,18 +125,11 @@ description = Example of a SFTP only service.
 address = 0.0.0.0
 port = 10022
 
-; When there are no specific host keys and/or certificates,
-; the general configuration from [server] section is used.
-;rsa_private_key = configuration/ssh_host_rsa_key
-;rsa_private_key_password = Disabled
-;dsa_private_key = configuration/ssh_host_dsa_key
-;dsa_private_key_password = Disabled
 ssh_cipher_list = secure
 banner = Welcome to the SFTP Service.
 ignore_create_permissions = No
 idle_connection_timeout = 300
 maximum_concurrent_connections = Disabled
-
 
 [services/ftps-1]
 enabled = Yes
@@ -160,19 +149,8 @@ enable_password_authentication = Yes
 enable_ssl_certificate_authentication = Yes
 ignore_ascii_data_type = No
 ascii_data_type_as_default = No
-; When there are no specific host keys and/or certificates,
-; the general configuration from [server] section is used.
-;ssl_certificate = configuration/self_signed_certificate.pem
-;ssl_key = configuration/ftp-service-key.pem
-;ssl_key_password = Disabled
-;ssl_certificate_authority = configuration/ftps-ca-cert.pem
-;ssl_certificate_revocation_list = configuration/ftps-crl.pem
-; Reload CRL after one day.
-;ssl_certificate_revocation_list_refresh = 86400
-;ssl_cipher_list = ALL:!RC4:!DES:!MD5:!EXP
-;ssl_allowed_methods = tlsv1
 idle_connection_timeout = 300
-maximum_concurrent_connections = Disabled
+maximum_concurrent_connections = 1000
 idle_data_connection_timeout = 30
 
 
@@ -183,11 +161,6 @@ protocol = https
 description = A demo text describing the purpose of this HTTPS service.
 address = 0.0.0.0
 port = 10443
-
-; When there are no specific host keys and/or certificates,
-; the general configuration from [server] section is used.
-;ssl_certificate = configuration/self_signed_certificate.pem
-;ssl_key = configuration/ftp-service-key.pem
 
 
 [resources/DEFAULT-LETS-ENCRYPT]

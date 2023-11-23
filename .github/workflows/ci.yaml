@@ -1,0 +1,160 @@
+#
+# Actions executed on GitHub VMs.
+#
+#
+name: ci
+
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+
+env:
+  DEBIAN_FRONTEND: noninteractive
+  CI: 'true'
+  USER: 'runner'
+
+
+jobs:
+
+  image-build:
+    runs-on: ubuntu-22.04
+    name: ${{ matrix.test.platform }} - ${{ matrix.test.base_image }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        test:
+          - platform: lnx-x64
+            base_image: ubuntu:22.04
+          - platform: rhel8-x64
+            base_image: centos:8
+
+    steps:
+
+    - uses: actions/checkout@v3
+
+    - name: Get SFTPPlus software and test tools.
+      timeout-minutes: 5
+      run: |
+        sudo apt-get update
+        sudo apt-get install putty
+        curl -LO https://download.sftpplus.com/trial/sftpplus-${{ matrix.test.platform }}-trial.tar.gz
+        ls -al
+
+    - name: Build image
+      timeout-minutes: 5
+      run: |
+        docker build \
+          --build-arg "target_platform=${{ matrix.test.platform }}" \
+          --build-arg "base_image=${{ matrix.test.base_image }}" \
+          --build-arg "sftpplus_version=trial" \
+          --tag sftpplus:gha-ci .
+
+    - name: Start the container
+      timeout-minutes: 5
+      run: |
+        docker run --detach --name sftpplus-trial \
+        --publish 10020:10020 \
+        --publish 10443:10443 \
+        --publish 10022:10022 \
+        --publish 10021:10021 \
+        --publish 10900-10910:10900-10910 \
+        sftpplus:gha-ci
+
+    - name: Wait container ports
+      timeout-minutes: 1
+      run: |
+        # The container will start, but it takes a few extra seconds for all
+        # the SFTPPlus servers inside the container to start.
+        # The first start takes longer as it will generate the TLS/SSH keys.
+        # We wait for 10443 as this is started last by default.
+        until $(curl --output /dev/null -k --silent --head --fail http://localhost:10443); do
+            echo 'Port 10443 not yet ready. Waiting 5 seconds.'
+            sleep 5
+        done
+        # Wait just a bit more to be extra safe.
+        sleep 1
+        docker logs sftpplus-trial
+
+    - name: Test HTTPS
+      timeout-minutes: 1
+      run: |
+        echo "Web UI"
+        curl -k https://localhost:10020 > /dev/null
+
+        echo "HTTPS session login."
+        curl -k --data 'username=test_user' --data 'password=test_password' \
+          -H 'Accept: application/json' \
+          https://localhost:10443/__chsps__/login
+
+        echo "REST basic-auth upload"
+        curl -k -T README.rst https://test_user:test_password@localhost:10443/home/README.rst
+
+        echo "REST file download"
+        curl -k  https://test_user:test_password@localhost:10443/home/README.rst -o test-download.rst
+        echo "Compare download result"
+        cmp --silent README.rst test-download.rst
+        rm test-download.rst
+
+    - name: Test FTPS
+      timeout-minutes: 1
+      run: |
+        echo "FTPS login dir listing"
+        curl -k --ftp-ssl ftp://test_user:test_password@localhost:10021
+        echo "FTPS upload"
+        curl -k --ftp-ssl -T README.rst ftp://test_user:test_password@localhost:10021
+        echo "FTPS download"
+        curl -k --ftp-ssl ftp://test_user:test_password@localhost:10021/README.rst -o test-download.rst
+        echo "Compare download result"
+        cmp README.rst test-download.rst
+        rm test-download.rst
+
+    - name: Test SFTP
+      timeout-minutes: 1
+      run: |
+        echo "SFTP login and upload"
+        # Putty 0.76 has no support for loading from file.
+        # Once GitHub Actions has newer Ubuntu,
+        # we can put the password in a file and load it with -pwfile
+        echo y | pscp -sftp -P 10022 -l test_user -pw test_password README.rst localhost:README.rst
+        echo "SFTP download"
+        pscp -sftp -P 10022 -l test_user -pw test_password localhost:README.rst test-download.rst
+        echo "Compare download result"
+        cmp README.rst test-download.rst
+        rm test-download.rst
+
+    - name: Debug via tmate session
+      if: ${{ !cancelled() && runner.debug == '1' }}
+      timeout-minutes: 60
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
+
+
+  # Helper so that on GitHub repo settings we can configure a single job as
+  # required.
+  ci-required:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    if:  ${{ !cancelled() }}
+    needs:
+      - image-build
+    steps:
+      - name: Require all successes
+        shell: python3 {0}
+        env:
+          RESULTS: ${{ toJSON(needs.*.result) }}
+        run: |
+          import json
+          import os
+          import sys
+          results = json.loads(os.environ["RESULTS"])
+          sys.exit(0 if all(result == "success" for result in results) else 1)
