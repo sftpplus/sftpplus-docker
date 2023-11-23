@@ -82,19 +82,19 @@ Launching a container
 ---------------------
 
 * Once the image is created, you can start a new Docker container using it.
-  In the following example, we run a container named ``sftpplus-trial-instance``
+  In the following example, we run a container named ``sftpplus-trial``
   using the ``sftpplus:4.0.0.trial`` image, which publishes its default services
   to the outside world. There are a few standard ports open by default
   (for the administrative interface, HTTPS service, SSH service, explicit FTP
   service and its passive ports range respectively)::
 
-    docker run --detach --name sftpplus-trial-instance \
+    docker run --detach --name sftpplus-trial \
         --publish 10020:10020 \
         --publish 10443:10443 \
         --publish 10022:10022 \
         --publish 10021:10021 \
         --publish 10900-10910:10900-10910 \
-        sftpplus:test.trial
+        sftpplus:4.0.0.trial
 
 * You can check that the container is started with::
 
@@ -102,7 +102,7 @@ Launching a container
 
 * And check its logs with::
 
-    docker logs sftpplus-trial-instance
+    docker logs sftpplus-trial
 
 If everything looks fine, you should be able to access the administrative
 web-based interface on port 10020, e.g. at https://DOCKER_ADDRESS:10020. Also,
@@ -111,15 +111,15 @@ https://DOCKER_ADDRESS:10443.
 
 * To inspect a container which is already running::
 
-    docker exec --interactive --tty sftpplus-trial-instance /bin/sh
+    docker exec --interactive --tty sftpplus-trial /bin/sh
 
 * You can stop the container with::
 
-    docker stop sftpplus-trial-instance
+    docker stop sftpplus-trial
 
 * And then remove it with::
 
-    docker rm sftpplus-trial-instance
+    docker rm sftpplus-trial
 
 * To remove the trial image altogether::
 
@@ -163,7 +163,7 @@ before running it::
 Then we should mount this to ``/srv/storage`` (as per the included configuration
 file) when running the container::
 
-    docker run --detach --name sftpplus-trial-instance \
+    docker run --detach --name sftpplus-trial \
         --publish 10020:10020 \
         --publish 10443:10443 \
         --publish 10022:10022 \
@@ -172,7 +172,7 @@ file) when running the container::
         --mount source=sftpplus_trial_storage,target=/srv/storage \
         sftpplus:4.0.0.trial
 
-Use ``docker inspect sftpplus-trial-instance`` to verify that the volume
+Use ``docker inspect sftpplus-trial`` to verify that the volume
 was created and mounted correctly. Look for the ``Mounts`` section::
 
     "Mounts": [

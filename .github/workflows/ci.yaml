@@ -60,7 +60,7 @@ jobs:
     - name: Start the container
       timeout-minutes: 10
       run: |
-        docker run --detach --name sftpplus-trial-instance \
+        docker run --detach --name sftpplus-trial \
         --publish 10020:10020 \
         --publish 10443:10443 \
         --publish 10022:10022 \
@@ -68,14 +68,19 @@ jobs:
         --publish 10900-10910:10900-10910 \
         sftpplus:gha-ci
 
-    - name: Wait container start
+    - name: Wait container ports
       timeout-minutes: 1
       run: |
-        sleep 1
-        until $(curl --output /dev/null -k --silent --head --fail http://localhost:10020); do
-            printf 'Port 10020 not yet ready. Waiting 5 seconds.'
+        # The container will start, but it takes a few extra seconds for all
+        # the SFTPPlus servers inside the container to start.
+        # We wait for 10443 as this is started last by default.
+        until $(curl --output /dev/null -k --silent --head --fail http://localhost:10443); do
+            printf 'Port 10443 not yet ready. Waiting 5 seconds.'
             sleep 5
         done
+        # Wait just a bit more to be extra safe.
+        sleep 1
+        docker logs sftpplus-trial
 
     - name: Test HTTPS
       timeout-minutes: 10
