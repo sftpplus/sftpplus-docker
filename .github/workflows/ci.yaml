@@ -87,44 +87,47 @@ jobs:
     - name: Test HTTPS
       timeout-minutes: 1
       run: |
+        echo "Web UI"
         curl -k https://localhost:10020
-        curl -k https://localhost:10443/home/
 
-        # HTTPS session login.
+        echo "HTTPS session login.""
         curl -k --data 'username=test_user' --data 'password=test_password' \
           -H 'Accept: application/json' \
           https://localhost:10443/__chsps__/login
 
-        # REST basic-auth upload
+        echo "REST basic-auth upload"
         curl -k -T README.rst https://test_user:test_password@localhost:10443/home/README.rst
 
-        # REST file download
-        curl -k  https://test_user:test_password@localhost:10443/home/README.rst -o test-download.txt
-        cmp --silent README.rst test-download.txt
-        rm test-download.txt
+        echo "REST file download"
+        curl -k  https://test_user:test_password@localhost:10443/home/README.rst -o test-download.rst
+        echo "Compare download result"
+        cmp --silent README.rst test-download.rst
+        rm test-download.rst
 
     - name: Test FTPS
       timeout-minutes: 1
       run: |
-        # FTP login dir listing
+        echo "FTPS login dir listing"
         curl -k --ftp-ssl ftp://test_user:test_password@localhost:10021
-        # FTPS upload
-        curl -k --ftp-ssl  -T README.rst ftp://test_user:test_password@localhost:10021
-        # FTPS download
+        echo "FTPS upload"
+        curl -k --ftp-ssl -T README.rst ftp://test_user:test_password@localhost:10021
+        echo "FTPS download"
         curl -k --ftp-ssl ftp://test_user:test_password@localhost:10021/README.rst -o test-download.rst
-        cmp --silent README.rst test-download.txt
-        rm test-download.txt
+        echo "Compare download result"
+        cmp README.rst test-download.rst
+        rm test-download.rst
 
     - name: Test SFTP
       timeout-minutes: 1
       run: |
-        # SFTP login and upload
+        echo "SFTP login and upload"
         echo -n "test_password" > pwfile
         echo y | pscp -sftp -P 10022 -l test_user -pwfile pwfile README.rst localhost:README.rst
-        # SFTP download
+        echo "SFTP download"
         pscp -sftp -P 10022 -l test_user -pwfile pwfile localhost:README.rst test-download.rst
-        cmp --silent README.rst test-download.txt
-        rm test-download.txt
+        echo "Compare download result"
+        cmp README.rst test-download.rst
+        rm test-download.rst
 
     - name: Debug via tmate session
       if: ${{ !cancelled() && runner.debug == '1' }}
