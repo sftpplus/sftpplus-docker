@@ -121,10 +121,12 @@ jobs:
       timeout-minutes: 1
       run: |
         echo "SFTP login and upload"
-        echo -n "test_password" > pwfile
-        echo y | pscp -sftp -P 10022 -l test_user -pwfile pwfile README.rst localhost:README.rst
+        # Putty 0.76 has no support for loading from file.
+        # Once GitHub Actions has newer Ubuntu,
+        # we can put the password in a file and load it with -pwfile
+        echo y | pscp -sftp -P 10022 -l test_user -pw test_password README.rst localhost:README.rst
         echo "SFTP download"
-        pscp -sftp -P 10022 -l test_user -pwfile pwfile localhost:README.rst test-download.rst
+        pscp -sftp -P 10022 -l test_user -pw test_password localhost:README.rst test-download.rst
         echo "Compare download result"
         cmp README.rst test-download.rst
         rm test-download.rst
