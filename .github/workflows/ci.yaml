@@ -27,7 +27,8 @@ jobs:
   image-build:
     runs-on: ubuntu-22.04
     name: ${{ matrix.test.platform }} - ${{ matrix.test.base_image }}
-    timeout-minutes: 60
+    # The job should be fast. We wait longer for debug sessions.
+    timeout-minutes: ${{ runner.debug == '1' && 60 || 10 }}
     strategy:
       fail-fast: false
       matrix:
@@ -49,7 +50,7 @@ jobs:
         ls -al
 
     - name: Build image
-      timeout-minutes: 10
+      timeout-minutes: 5
       run: |
         docker build \
           --build-arg "target_platform=${{ matrix.test.platform }}" \
@@ -58,7 +59,7 @@ jobs:
           --tag sftpplus:gha-ci .
 
     - name: Start the container
-      timeout-minutes: 10
+      timeout-minutes: 5
       run: |
         docker run --detach --name sftpplus-trial \
         --publish 10020:10020 \
@@ -73,9 +74,10 @@ jobs:
       run: |
         # The container will start, but it takes a few extra seconds for all
         # the SFTPPlus servers inside the container to start.
+        # The first start takes longer as it will generate the TLS/SSH keys.
         # We wait for 10443 as this is started last by default.
         until $(curl --output /dev/null -k --silent --head --fail http://localhost:10443); do
-            printf 'Port 10443 not yet ready. Waiting 5 seconds.'
+            echo 'Port 10443 not yet ready. Waiting 5 seconds.'
             sleep 5
         done
         # Wait just a bit more to be extra safe.
@@ -83,7 +85,7 @@ jobs:
         docker logs sftpplus-trial
 
     - name: Test HTTPS
-      timeout-minutes: 10
+      timeout-minutes: 1
       run: |
         curl -k https://localhost:10020
         curl -k https://localhost:10443/home/
@@ -94,33 +96,33 @@ jobs:
           https://localhost:10443/__chsps__/login
 
         # REST basic-auth upload
-        curl -k -T README.rst https://test_user:test_password@docker.chevah.com:10443/home/README.rst
+        curl -k -T README.rst https://test_user:test_password@localhost:10443/home/README.rst
 
         # REST file download
-        curl -k  https://test_user:test_password@docker.chevah.com:10443/home/README.rst -o test-download.txt
+        curl -k  https://test_user:test_password@localhost:10443/home/README.rst -o test-download.txt
         cmp --silent README.rst test-download.txt
         rm test-download.txt
 
     - name: Test FTPS
-      timeout-minutes: 10
+      timeout-minutes: 1
       run: |
         # FTP login dir listing
-        curl -k --ftp-ssl ftp://test_user:test_password@docker.chevah.com:10021
+        curl -k --ftp-ssl ftp://test_user:test_password@localhost:10021
         # FTPS upload
-        curl -k --ftp-ssl  -T README.rst ftp://test_user:test_password@docker.chevah.com:10021
+        curl -k --ftp-ssl  -T README.rst ftp://test_user:test_password@localhost:10021
         # FTPS download
-        curl -k --ftp-ssl ftp://test_user:test_password@docker.chevah.com:10021/README.rst -o test-download.rst
+        curl -k --ftp-ssl ftp://test_user:test_password@localhost:10021/README.rst -o test-download.rst
         cmp --silent README.rst test-download.txt
         rm test-download.txt
 
     - name: Test SFTP
-      timeout-minutes: 10
+      timeout-minutes: 1
       run: |
         # SFTP login and upload
         echo -n "test_password" > pwfile
-        echo y | pscp -sftp -P 10022 -l test_user -pwfile pwfile README.rst docker.chevah.com:README.rst
+        echo y | pscp -sftp -P 10022 -l test_user -pwfile pwfile README.rst localhost:README.rst
         # SFTP download
-        pscp -sftp -P 10022 -l test_user -pwfile pwfile docker.chevah.com:README.rst test-download.rst
+        pscp -sftp -P 10022 -l test_user -pwfile pwfile localhost:README.rst test-download.rst
         cmp --silent README.rst test-download.txt
         rm test-download.txt
 
