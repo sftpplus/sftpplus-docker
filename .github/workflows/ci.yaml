@@ -111,10 +111,11 @@ jobs:
         rm test-download.txt
 
     - name: Debug via tmate session
-      #if: runner.debug == "1"
+      if: runner.debug == "1"
       uses: mxschmitt/action-tmate@v3
       with:
         limit-access-to-actor: true
+
 
   # Helper so that on GitHub repo settings we can configure a single job as
   # required.
