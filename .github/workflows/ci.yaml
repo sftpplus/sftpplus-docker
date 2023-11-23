@@ -35,7 +35,6 @@ jobs:
         test:
           - platform: lnx-64
             base_image: ubuntu:22.04
-        test:
           - platform: rhel4-64
             base_image: centos:8
 
