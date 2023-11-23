@@ -88,9 +88,9 @@ jobs:
       timeout-minutes: 1
       run: |
         echo "Web UI"
-        curl -k https://localhost:10020
+        curl -k https://localhost:10020 > /dev/null
 
-        echo "HTTPS session login.""
+        echo "HTTPS session login."
         curl -k --data 'username=test_user' --data 'password=test_password' \
           -H 'Accept: application/json' \
           https://localhost:10443/__chsps__/login
