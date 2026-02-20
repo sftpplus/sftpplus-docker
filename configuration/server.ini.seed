@@ -243,7 +243,7 @@ content: external-file:configuration/ssl_certificate.pem
 [vault-items/default-ssh-rsa-key]
 name: Default SSH RSA
 type: ssh-private
-content: external-file:configuration/ssh_host_rsa_keys
+content: external-file:configuration/ssh_host_rsa_key
 
 [vault-items/MICROSOFT-CA]
 name: Microsoft CAs
@@ -325,6 +325,17 @@ create_home_folder_group = ${DEFAULT_OS_GROUP}
 allow_certificate_authentication = No
 allow_own_password_change = No
 
+;
+; Below are the customization for Docker
+;
+
+
+[event-handlers/e137661a-150d-48f4-9239-4d9661492c11]
+description = Send all logs to standard output.
+enabled = True
+type = standard-stream
+name = Standard Output Logger
+entry_content = {timestamp.iso_8601_local} {id} {component.uuid} {account.name} {account.peer.address}:{account.peer.port} {message}
 
 
 ; Below is an example for creating an account with username 'test_user',
