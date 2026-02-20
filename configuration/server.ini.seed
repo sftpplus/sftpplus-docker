@@ -299,7 +299,8 @@ content: ${GO_DADDY_G2_G1}
 enabled = Yes
 name = admin
 description = Default administrator.
-password = $6$rounds=80000$yrfLomVMbUTIo7TW$HZB4qlPLsimnCqm2D6MAVRw/oBzs2Rw5yiMLzNF5lSkUD/Fu.Jru0vfMZlXRj83CZCiy5x6dwxAaXceNvgRcg.
+; This is the encrypted value for 'pass'.
+password = $6$rounds=80000$oPp2OCqqSflb2YN5$KdXiAO6fhkObjBx6tJnS/EZ3bzcxeO1RPvJchBVXR00Gnj5O35fAC07psTBz4KE2AGbq/lZ.ifS7SrkDZmow00
 role = DEFAULT-ROLE
 
 
