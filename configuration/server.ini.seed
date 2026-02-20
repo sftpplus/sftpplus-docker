@@ -4,98 +4,95 @@
 ; For more details about this file, please consult the documentation.
 ;
 
+;
+; Main configuration file for server.
+;
+; For more details about this file please consult the documentation.
+;
+
 [server]
 ; Universally Unique identifier for this server.
 uuid = single-server-uuid
 
 ; Human readable name short name for this server. No spaces.
 ; Can be set as fully qualified domain name.
-name = single-server-name
+name = SFTPPlus
 
 ; Human readable free form text describing this server.
-description = SFTPPlus Docker Container.
-
-; The account option should always be disabled on Docker as SFTPPlus will
-; run under the account designated by Docker engine / OpenShift.
-account = disabled
+description = Generic description.
 
 ; User mask file permissions used for creating new files and folders
 ; on the server.
 ; This option is ignored on Windows systems.
 umask = 022
 
-; List of enabled authentication methods and the order in which they will be
-; used to validate the credentials for the remote clients.
-authentications = username-blocker-uuid, ban-ip-uuid, DEFAULT-AUTHENTICATION
-manager_authentications = ban-ip-uuid, DEFAULT-AUTHENTICATION
-
-; Password policy.
+; Check that newly set or updated password meet the password policy
+; requirements.
 password_minimum_strength = 4
 password_minimum_length = 8
+password_history = 0
 password_hashing_scheme = crypt-sha512
 
-; Self-signed SSL certificate and private SSH keys to be generated.
-ssl_certificate = configuration/ssl_certificate.pem
-ssh_host_private_keys = configuration/ssh_host_keys
+; List of enabled authentication methods and the order in which they will be
+; used to validate the credentials for the remote clients.
+authentications = DEFAULT-AUTHENTICATION
 
+; By default, ask for product usage on first authentication from the
+; local manager.
+product_key = ask
+
+; SSL/TLS certificate used by default for TLS-based services (FTPS/HTTS).
+tls_private_certificate: default-tls-private-certificate
+
+; SSH private keys used by default for SSH-based services (SFTP/SCP).
+ssh_server_keys: default-ssh-rsa-key
+
+
+[security-policies/DEFAULT-SECURITY-POLICY]
+name = Default Security Policy
+description = The security policy enabled by default with a new installation.
+  Deny admin names from file transfer services.
+  Allow any username for the administrative services
+  Ban source IP after 5 consecutive failures.
+  Ban source IP for 1 hour.
+deny_usernames = root, adm, admin, administrator
+deny_administrators =
+source_ip_ban_after_count = 5
+source_ip_ban_interval = 3600
 
 [authentications/DEFAULT-AUTHENTICATION]
 enabled = Yes
 type = application
 name = SFTPPlus Accounts and Administrators
-description = This authentication method allows authentication of accounts
-    and administrators defined in this configuration file.
-
-
-[authentications/username-blocker-uuid]
-enabled = Yes
-type = deny-username
-name = Deny Admin Accounts
-description = Deny all administrator accounts.
-; You can add more accounts to the list.
-usernames = root, adm, admin, administrator
-
-
-[authentications/ban-ip-uuid]
-enabled = Yes
-type = ip-time-ban
-name = Ban IP with multiple failures
-description = Will ban the source IP for 10 minutes after 10 consecutive failures.
-ban_interval = 600
-ban_after_count = 10
-
-
-[event-handlers/e137661a-150d-48f4-9239-4d9661492c11]
-enabled = True
-type = standard-stream
-name = Standard Output Logger
-entry_content = {timestamp.iso_8601_local} {id} {component.uuid} {account.name} {account.peer.address}:{account.peer.port} {message}
-
+description = This authentication method allows authentication of accounts and
+    administrators defined in SFTPPlus' own configuration file.
+    By default, it allows any account from any group, as long as the account
+    and its group are enabled.
+allowed_groups =
+strict_group_access = yes
 
 [event-handlers/default-database]
-enabled = yes
-type = database
-name = Database Logger
-description = Store current day log entries into a database for fast
+enabled = Yes
+name = Log in database
+description = Store log entries into a database for fast
     search and filtering.
-path: log/server.db3
-auto_delete: 1
+    It ignored HTTP connection establishment logs both client-side and
+    server-side connections.
+    This uses the embedded database which is not suitable for production
+    environments that generate lots of log entries.
+    By default, it only keeps logs for 1 week.
 
+type = database
+target = !40032, !40033, !40053, !40054
+path = log/server.db3
 
-[event-handlers/DEFAULT-FILE]
-enabled = No
-name = Default Local Log File
-description = Append logs to a file on local filesystem.
+instances = any
 
-type = local-file
+; Keep logs for 7 days
+auto_delete: 7
 
-path = log/server.log
-
-rotate_external = No
-rotate_at_size = Disabled
-rotate_each = Disabled
-rotate_on = 00:00 time-of-day
-rotate_count = 30
+; Disable automatic failure on errors.
+fail_after_errors = 0
 
 
 [services/DEFAULT-MANAGER]
@@ -106,13 +103,10 @@ description = Service used for managing the server configuration.
 address = 0.0.0.0
 port = 10020
 
+block_source_at_connection = No
+idle_connection_timeout = 600
+authentications =
 ssl_cipher_list = secure
-ssl_allowed_methods = tlsv1.2 tlsv1.3
-; When there are no specific host keys and/or certificates,
-; the general configuration from [server] section is used.
-;ssl_certificate = configuration/self_signed_certificate.pem
-;ssl_key = configuration/local-manager-key.pem
-;ssl_certificate_authority = configuration/local-manager-ca-cert.pem
 
 
 [services/sftp-1]
@@ -125,11 +119,13 @@ description = Example of a SFTP only service.
 address = 0.0.0.0
 port = 10022
 
+block_source_at_connection = Yes
+
 ssh_cipher_list = secure
 banner = Welcome to the SFTP Service.
 ignore_create_permissions = No
 idle_connection_timeout = 300
-maximum_concurrent_connections = Disabled
+maximum_concurrent_connections = 10000
 
 [services/ftps-1]
 enabled = Yes
@@ -139,39 +135,52 @@ description = A demo text describing the purpose of this FTP service.
 address = 0.0.0.0
 port = 10021
 
+block_source_at_connection = Yes
+
 banner = Welcome to the FTP/FTPS Service.
 passive_port_range = 10900 - 10910
 ftps_explicit_enabled = Yes
-ftps_force_secured_authentication = Yes
+ftps_reuse_session = Yes
 ftps_force_secured_command_channel = Yes
-ftps_force_secured_data_channel = Yes
 enable_password_authentication = Yes
 enable_ssl_certificate_authentication = Yes
 ignore_ascii_data_type = No
 ascii_data_type_as_default = No
+
+;ssl_cipher_list = secure
+;ssl_allowed_methods = secure
 idle_connection_timeout = 300
-maximum_concurrent_connections = 1000
+maximum_concurrent_connections = 10000
 idle_data_connection_timeout = 30
 
 
 [services/https-1]
 enabled = Yes
 name = https
-protocol = https
+type = https
 description = A demo text describing the purpose of this HTTPS service.
 address = 0.0.0.0
 port = 10443
 
+ui_version = ui-gen-2
+block_source_at_connection = No
+
+;ssl_cipher_list = secure
+;ssl_allowed_methods = secure
 
 [resources/DEFAULT-LETS-ENCRYPT]
-enabled = no
-name = Lets-Encrypt-Client
-description = Component handling the generation and renewal of Let's Encrypt
-	certificates.
-type = lets-encrypt
-address = 0.0.0.0
-port = 80
-acme_url = https://acme-v01.api.letsencrypt.org/directory
+enabled: no
+name: Lets-Encrypt-Client
+description: Component handling the generation and renewal of Let's Encrypt
+  certificates.
+
+type: lets-encrypt
+address: 0.0.0.0
+port: 80
+
+# prod-v1 https://acme-v01.api.letsencrypt.org/directory
+# test-v1 https://acme-staging.api.letsencrypt.org/directory
+acme_url: https://acme-v02.api.letsencrypt.org/directory
 
 
 [resources/DEFAULT-SQLITE]
@@ -180,17 +189,20 @@ description = Embedded database using sqlite.
 type = sqlite
 path = configuration/cache.db3
 
+
 [resources/DEFAULT-EMAIL-CLIENT]
-name = Email-Client
-description = STMP client configuration used to send email.
-	Update the address and port to match your infrastructure.
-type = email-client
-email_from_address = sftpplus@example.com
-email_to_recipients = admin-team@example.com
-address = smtp.example.com
-port = 25
-username =
-password =
+name: Email-Client
+description: SMTP client configuration used to send email.
+  Update the address and port to match your infrastructure.
+
+type: email-client
+
+email_from_address: sftpplus@example.com
+email_to_recipients: admin-team@example.com
+address: smtp.example.com
+port: 25
+username:
+password:
 
 
 [resources/DEFAULT-ANALYTICS]
@@ -198,16 +210,96 @@ enabled = Yes
 type = analytics
 name = Analytics engine
 description = Collect and report last successful login for
-	accounts and administrators.
-monitor_interval = 600
+  accounts and administrators.
+monitor_interval: 600
+
+[resources/DEFAULT-VAULT]
+type = vault
+name = Vault Manager
+description = Stores sensitive information such as PGP keys, SSH keys, and certificates.
+external_vault_file =
+
+
+[resources/DEFAULT-NODE-SYNC]
+enabled = yes
+type = node-sync
+name = Cluster operation
+description =
+  This is an example of running this SFTPPlus instance as the controller
+  (primary node) of the cluster.
+  Other SFTPPlus instance will connect to this SFTPPlus instance as
+  cluster nodes to synchronize their configuration.
+role_in_cluster = controller
+sync_interval = 60
+
+
+
+[vault-items/default-tls-private-certificate]
+name: Default TLS Private Certificate
+type: private-certificate
+content: external-file:configuration/ssl_certificate.pem
+
+
+[vault-items/default-ssh-rsa-key]
+name: Default SSH RSA
+type: ssh-private
+content: external-file:configuration/ssh_host_rsa_keys
+
+[vault-items/MICROSOFT-CA]
+name: Microsoft CAs
+type: trusted-certificates
+description:
+  Certification authorities used by Microsoft and Azure services.
+  Automatically updated by SFTPPlus.
+content: ${MICROSOFT_IT_CA}
+
+[vault-items/MOZILLA-CA]
+name: Mozilla Root CAs
+type: trusted-certificates
+description:
+  Certification authorities trusted by Mozilla organization.
+  These are all the public CAs included in Mozilla products.
+  Automatically updated by SFTPPlus.
+content: ${MOZILLA_CA_ROOTS}
+
+[vault-items/GOOGLE-CA]
+name: Google CAs
+type: trusted-certificates
+description:
+  Certification authorities used by Google services.
+  Automatically updated by SFTPPlus.
+content: ${GOOGLE_CA_ROOTS}
+
+[vault-items/DIGICERT-CA]
+name: DigiCert CAs
+type: trusted-certificates
+description:
+  Certification authorities used by DigiCert.
+  Automatically updated by SFTPPlus.
+content: ${DIGICERT_CA_ROOTS}
+
+[vault-items/LETS-ENCRYPT-CA]
+name: Let's Encrypt CAs
+type: trusted-certificates
+description:
+  Certification authorities used by Let's Encrypt.
+  Automatically updated by SFTPPlus.
+content: ${LETS_ENCRYPT_X3_CA}
+
+[vault-items/GO-DADDY-CA]
+name: GoDaddy CAs
+type: trusted-certificates
+description:
+  Certification authorities used by GoDaddy.
+  Automatically updated by SFTPPlus.
+content: ${GO_DADDY_G2_G1}
 
 
 [administrators/DEFAULT-ADMINISTRATOR-UUID]
 enabled = Yes
 name = admin
 description = Default administrator.
-; This is the encrypted value for 'pass'.
-password = $6$rounds=80000$oPp2OCqqSflb2YN5$KdXiAO6fhkObjBx6tJnS/EZ3bzcxeO1RPvJchBVXR00Gnj5O35fAC07psTBz4KE2AGbq/lZ.ifS7SrkDZmow00
+password = $6$rounds=80000$yrfLomVMbUTIo7TW$HZB4qlPLsimnCqm2D6MAVRw/oBzs2Rw5yiMLzNF5lSkUD/Fu.Jru0vfMZlXRj83CZCiy5x6dwxAaXceNvgRcg.
 role = DEFAULT-ROLE
 
 
@@ -215,7 +307,6 @@ role = DEFAULT-ROLE
 enabled = Yes
 name = Default Super-Administrators
 description = Default group for administrators with full rights.
-include_os_group = No
 
 
 [groups/DEFAULT_GROUP]
@@ -223,27 +314,18 @@ name = DEFAULT_GROUP
 enabled = Yes
 description = This is automatically associated to all
     accounts (application or operating system).
+    To help with the initial testing, users have access to a temporary
+    directory.
+
 lock_in_home_folder = Yes
-; Use values provided by the operating system.
-home_folder_path = ${OS_HOME}
-create_home_folder = No
+home_folder_path = /tmp
+create_home_folder = yes
 create_home_folder_owner = ${DEFAULT_OS_USER}
 create_home_folder_group = ${DEFAULT_OS_GROUP}
-; SSH key authentication is disabled by default.
-ssh_authorized_keys_path = Disabled
 allow_certificate_authentication = No
+allow_own_password_change = No
 
 
-[groups/57e25948-03f9-41eb-9205-cee3e97799ee]
-name = test_group
-type = group
-description = Default group for all application accounts.
-home_folder_path = /srv/storage
-create_home_folder = No
-ssh_authorized_keys_path = Disabled
-allow_certificate_authentication = No
-permissions = allow-full-control
-allow_own_password_change = no
 
 ; Below is an example for creating an account with username 'test_user',
 ; authenticated using 'test_password' password and for which files

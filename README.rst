@@ -49,7 +49,7 @@ Docker Image Creation
   The following example uses the link for the generic Linux trial,
   but you can replace it with your full version download link::
 
-    wget https://download.sftpplus.com/trial/sftpplus-lnx-x64-trial.tar.gz
+    wget https://download.sftpplus.com/trial/sftpplus-linux-x64-trial.tar.gz
 
 * Advanced users should edit the ``configuration/server.ini`` file to match
   their needs.
@@ -60,18 +60,18 @@ Docker Image Creation
   and the full versions of SFTPPlus.
 
 * From inside the main directory, build the ``sftpplus`` image with
-  (replace ``4.0.0.trial`` with your preferred tag).
+  (replace ``5.0.0.trial`` with your preferred tag).
   This will create an Ubuntu based image by default::
 
-    docker build --tag sftpplus:4.0.0.trial .
+    docker build --tag sftpplus:5.0.0.trial .
 
 * Optionally, you can use build arguments to target a specific OS::
 
    docker build \
-    --build-arg "target_platform=lnx-x64" \
+    --build-arg "target_platform=linux-x64" \
     --build-arg "base_image=ubuntu:22.04" \
     --build-arg "sftpplus_version=trial" \
-    --tag sftpplus:4.0.0.trial .
+    --tag sftpplus:5.0.0.trial .
 
 * If successful, the following should list the newly-available Docker image::
 
@@ -83,7 +83,7 @@ Launching a container
 
 * Once the image is created, you can start a new Docker container using it.
   In the following example, we run a container named ``sftpplus-trial``
-  using the ``sftpplus:4.0.0.trial`` image, which publishes its default services
+  using the ``sftpplus:5.0.0.trial`` image, which publishes its default services
   to the outside world. There are a few standard ports open by default
   (for the administrative interface, HTTPS service, SSH service, explicit FTP
   service and its passive ports range respectively)::
@@ -94,7 +94,7 @@ Launching a container
         --publish 10022:10022 \
         --publish 10021:10021 \
         --publish 10900-10910:10900-10910 \
-        sftpplus:4.0.0.trial
+        sftpplus:5.0.0.trial
 
 * You can check that the container is started with::
 
@@ -123,7 +123,7 @@ https://DOCKER_ADDRESS:10443.
 
 * To remove the trial image altogether::
 
-    docker rmi sftpplus:4.0.0.trial
+    docker rmi sftpplus:5.0.0.trial
 
 
 Image Customization
@@ -170,7 +170,7 @@ file) when running the container::
         --publish 10021:10021 \
         --publish 10900-10910:10900-10910 \
         --mount source=sftpplus_trial_storage,target=/srv/storage \
-        sftpplus:4.0.0.trial
+        sftpplus:5.0.0.trial
 
 Use ``docker inspect sftpplus-trial`` to verify that the volume
 was created and mounted correctly. Look for the ``Mounts`` section::

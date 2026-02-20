@@ -19,13 +19,13 @@ FROM $base_image
 # Need to repeat them to be available after FROM
 # See https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 ARG base_image
-ARG target_platform=lnx-x64
+ARG target_platform=linux-x64
 ARG sftpplus_version=trial
 
-# SFTPPlus moniker for the current OS (e.g. "rhel8-x64", "ubuntu2004-x64", "alpine312-x64").
+# SFTPPlus moniker for the current OS (e.g. "linux-x64", "linux_musl-x64").
 ENV SFTPPLUS_PLATFORM $target_platform
 
-# For the non-trial package, this would be the version, eg. "4.0.0".
+# For the non-trial package, this would be the version, eg. "5.0.0".
 ENV SFTPPLUS_VERSION $sftpplus_version
 
 # Official Dockerfile for SFTPPlus.

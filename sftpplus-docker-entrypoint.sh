@@ -15,11 +15,11 @@ else
     --sign-algorithm=sha256 \
     > ${SFTPPLUS_CONFIGURATION}/ssl_certificate.pem
   ./bin/admin-commands.sh generate-ssh-key \
-    --key-file=${SFTPPLUS_CONFIGURATION}/ssh_host_keys \
+    --key-file=${SFTPPLUS_CONFIGURATION}/ssh_host_rsa_keys \
     --key-type=rsa \
     --key-size=2048
   # Cleanup public key as we don't need it.
-  rm ${SFTPPLUS_CONFIGURATION}/ssh_host_keys.pub
+  rm ${SFTPPLUS_CONFIGURATION}/ssh_host_rsa_keys.pub
 fi
 
 echo "Starting using configuration from: $SFTPPLUS_CONFIGURATION"
