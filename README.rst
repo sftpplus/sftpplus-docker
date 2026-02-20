@@ -1,5 +1,5 @@
-SFTPPlus Docker example
-=======================
+SFTPPlus MFT Server Docker example
+==================================
 
 This repository contains a ``Dockerfile`` and related files for creating Docker
 containers running Pro:Atria's SFTPPlus Managed File Transfer for evaluation
