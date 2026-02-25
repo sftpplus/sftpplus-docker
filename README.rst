@@ -14,6 +14,9 @@ The FTPS and HTTPS services are using self-signed certificates.
 This repository is provided as an evaluation tool and the base for creating a
 custom SFTPPlus Docker image to suit your production needs.
 
+The code from here is used as part of our continuous automated testing,
+so it is guaranteed to work with the latest SFTPPlus versions.
+
 The default-included basic configuration enables an administrator account
 named ``admin`` with password ``pass``.
 The administrative web-based interface runs on port 10020, you should access it
@@ -146,8 +149,9 @@ different ports.
 For production usage, it is recommended to update the password for the
 ``admin`` account and remove the ``test_user`` account.
 
-The logs produced by the server are sent to standard output only, so that they
-are available through ``docker log``. All local logs are disabled.
+The logs produced by the server are sent to standard output only,
+so that they are available through ``docker logs``.
+All local logs are disabled.
 
 User data should be handled by a separate volume, outside of the container,
 mounted from the Docker host.
@@ -155,8 +159,7 @@ This will allow the data to persist when the container no longer exists,
 and also ease access to the data outside of the container.
 For production usage, dedicated volumes should be used for user data.
 
-For example, for the above Docker image, let's create a dedicated volume
-before running it::
+For example, for the above Docker image, let's create a dedicated volume before running it::
 
     docker volume create sftpplus_trial_storage
 
