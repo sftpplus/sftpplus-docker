@@ -43,11 +43,11 @@ rm -rf /opt/configuration
 case ${ID} in
     alpine)
         addgroup sftpplus
-        adduser -G sftpplus -g "SFTPPlus" -s /bin/false -h /dev/null -H -D sftpplus
+        adduser -G sftpplus -g "SFTPPlus" -s /bin/false -h /opt/sftpplus/run -H -D sftpplus
         ;;
     *)
         groupadd sftpplus
-        useradd -g sftpplus -c "SFTPPlus" -s /bin/false -d /dev/null -M sftpplus
+        useradd -g sftpplus -c "SFTPPlus" -s /bin/false -d /opt/sftpplus/run -M sftpplus
         ;;
 esac
 

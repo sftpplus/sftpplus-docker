@@ -163,7 +163,7 @@ For example, for the above Docker image, let's create a dedicated volume before 
 
     docker volume create sftpplus_trial_storage
 
-Then we should mount this to ``/srv/storage`` (as per the included configuration
+Then we should mount this to `/srv/storage` (as per the included configuration
 file) when running the container::
 
     docker run --detach --name sftpplus-trial \
@@ -175,7 +175,9 @@ file) when running the container::
         --mount source=sftpplus_trial_storage,target=/srv/storage \
         sftpplus:5.0.0.trial
 
-Use ``docker inspect sftpplus-trial`` to verify that the volume
+The `/opt/sftpplus/run` folder is used by SFTPPlus to create temporary files needed to complete various task. You can mount it as an in-memory temporary filesystem.
+
+Use `docker inspect sftpplus-trial` to verify that the volume
 was created and mounted correctly. Look for the ``Mounts`` section::
 
     "Mounts": [
