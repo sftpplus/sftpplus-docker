@@ -78,6 +78,7 @@ jobs:
         --publish 10022:10022 \
         --publish 10021:10021 \
         --publish 10900-10910:10900-10910 \
+        --platform "${{ matrix.test.docker_platform }}" \
         sftpplus:gha-ci
 
     - name: Wait container ports
