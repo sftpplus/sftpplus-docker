@@ -8,8 +8,11 @@
 # * centos:8
 # * ubuntu:20.04
 # * ubuntu:22:04
+# * ubuntu:24:04
+# * ubuntu:26:04
 # * alpine:3.16
-ARG base_image=ubuntu:22.04
+# * alpine:3.24
+ARG base_image=ubuntu:26.04
 
 ################################################################################
 # Image details
@@ -29,7 +32,7 @@ ENV SFTPPLUS_PLATFORM $target_platform
 ENV SFTPPLUS_VERSION $sftpplus_version
 
 # Official Dockerfile for SFTPPlus.
-MAINTAINER support@sftpplus.com
+LABEL org.opencontainers.image.authors="SFTPPlus Support <support@sftpplus.com>"
 
 # Expose through Docker the ports used by SFTPPlus.
 # * Local Manager
