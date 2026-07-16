@@ -25,17 +25,17 @@ env:
 jobs:
 
   image-build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     name: ${{ matrix.test.platform }} - ${{ matrix.test.base_image }}
     timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
         test:
-          - platform: lnx-x64
-            base_image: ubuntu:22.04
-          - platform: rhel8-x64
-            base_image: centos:8
+          - platform: linux-x64
+            base_image: ubuntu:26.04
+          - platform: rhel9-x64
+            base_image: centos:9
 
     steps:
 

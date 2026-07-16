@@ -26,10 +26,10 @@ ARG target_platform=linux-x64
 ARG sftpplus_version=trial
 
 # SFTPPlus moniker for the current OS (e.g. "linux-x64", "linux_musl-x64").
-ENV SFTPPLUS_PLATFORM $target_platform
+ENV SFTPPLUS_PLATFORM=$target_platform
 
 # For the non-trial package, this would be the version, eg. "5.0.0".
-ENV SFTPPLUS_VERSION $sftpplus_version
+ENV SFTPPLUS_VERSION=$sftpplus_version
 
 # Official Dockerfile for SFTPPlus.
 LABEL org.opencontainers.image.authors="SFTPPlus Support <support@sftpplus.com>"
