@@ -6,6 +6,7 @@
 # This Dockerfile is tested with the following upstream Docker images (but
 # works with others as well, as long as you use the right SFTPPlus package):
 # * centos:8
+# * rockylinux:9
 # * ubuntu:20.04
 # * ubuntu:22:04
 # * ubuntu:24:04

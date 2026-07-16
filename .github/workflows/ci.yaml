@@ -35,7 +35,7 @@ jobs:
           - platform: linux-x64
             base_image: ubuntu:26.04
           - platform: rhel9-x64
-            base_image: centos:9
+            base_image: rockylinux:9
 
     steps:
 
