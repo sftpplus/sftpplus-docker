@@ -25,7 +25,7 @@ env:
 jobs:
 
   image-build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.test.runs_on }}
     name: ${{ matrix.test.sftpplus_platform }} - ${{ matrix.test.base_image }}
     timeout-minutes: 60
     strategy:
@@ -35,12 +35,15 @@ jobs:
           - sftpplus_platform: linux-x64
             docker_platform: linux/amd64
             base_image: ubuntu:26.04
+            runs_on: ubuntu-latest
           - sftpplus_platform: linux-arm64
             docker_platform: linux/arm64
             base_image: ubuntu:26.04
+            runs_on:  ubuntu-22.04-arm
           - sftpplus_platform: linux-x64
             docker_platform: linux/amd64
             base_image: rockylinux:9
+            runs_on: ubuntu-latest
 
     steps:
 
