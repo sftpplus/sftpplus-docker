@@ -13,15 +13,16 @@ case ${ID} in
     ubuntu|debian)
         # Get the OpenSSL and libffi libraries, the only dependencies.
         apt-get update
-        apt-get install -y openssl libffi7
+        apt-get install -y libffi7
         apt-get clean
+        rm -rf /var/lib/apt/lists/*
         ;;
     alpine)
         # Update the already-included OpenSSL libs.
         apk update
         apk upgrade
         # Get the libffi library, as this is the only dependency missing.
-        apk add libffi
+        apk add --no-cache libffi
         # Force cleaning the cache.
         rm -f /var/cache/apk/*
         ;;
@@ -71,7 +72,7 @@ chmod -R g=u /opt/sftpplus/configuration \
     /opt/sftpplus/log \
     /srv/storage
 
-# Just to troubleshoot and check the permisisons are set ok at the
+# Just to troubleshoot and check the permissions are set ok at the
 # end of the run.
 ls -al /opt/sftpplus/
 # Also show the ID of the sftpplus user.

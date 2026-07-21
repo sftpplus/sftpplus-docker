@@ -6,6 +6,7 @@
 # This Dockerfile is tested with the following upstream Docker images (but
 # works with others as well, as long as you use the right SFTPPlus package):
 # * centos:8
+# * rockylinux:9
 # * ubuntu:20.04
 # * ubuntu:22:04
 # * ubuntu:24:04
@@ -26,10 +27,10 @@ ARG target_platform=linux-x64
 ARG sftpplus_version=trial
 
 # SFTPPlus moniker for the current OS (e.g. "linux-x64", "linux_musl-x64").
-ENV SFTPPLUS_PLATFORM $target_platform
+ENV SFTPPLUS_PLATFORM=$target_platform
 
 # For the non-trial package, this would be the version, eg. "5.0.0".
-ENV SFTPPLUS_VERSION $sftpplus_version
+ENV SFTPPLUS_VERSION=$sftpplus_version
 
 # Official Dockerfile for SFTPPlus.
 LABEL org.opencontainers.image.authors="SFTPPlus Support <support@sftpplus.com>"

@@ -25,17 +25,25 @@ env:
 jobs:
 
   image-build:
-    runs-on: ubuntu-22.04
-    name: ${{ matrix.test.platform }} - ${{ matrix.test.base_image }}
+    runs-on: ${{ matrix.test.runs_on }}
+    name: ${{ matrix.test.sftpplus_platform }} - ${{ matrix.test.base_image }}
     timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
         test:
-          - platform: lnx-x64
-            base_image: ubuntu:22.04
-          - platform: rhel8-x64
-            base_image: centos:8
+          - sftpplus_platform: linux-x64
+            docker_platform: linux/amd64
+            base_image: ubuntu:26.04
+            runs_on: ubuntu-latest
+          - sftpplus_platform: linux-arm64
+            docker_platform: linux/arm64
+            base_image: ubuntu:26.04
+            runs_on:  ubuntu-22.04-arm
+          - sftpplus_platform: linux-x64
+            docker_platform: linux/amd64
+            base_image: rockylinux:9
+            runs_on: ubuntu-latest
 
     steps:
 
@@ -45,15 +53,21 @@ jobs:
       timeout-minutes: 5
       run: |
         sudo apt-get update
-        sudo apt-get install putty
-        curl -LO https://download.sftpplus.com/trial/sftpplus-${{ matrix.test.platform }}-trial.tar.gz
+        sudo apt-get install -y putty
+        curl -LO https://download.sftpplus.com/trial/sftpplus-${{ matrix.test.sftpplus_platform }}-trial.tar.gz
         ls -al
+
+    - name: Prepare ARM64 cross build
+      timeout-minutes: 5
+      run: |
+        docker run --privileged --rm tonistiigi/binfmt --install arm64
 
     - name: Build image
       timeout-minutes: 5
       run: |
         docker build \
-          --build-arg "target_platform=${{ matrix.test.platform }}" \
+          --platform "${{ matrix.test.docker_platform }}" \
+          --build-arg "target_platform=${{ matrix.test.sftpplus_platform }}" \
           --build-arg "base_image=${{ matrix.test.base_image }}" \
           --build-arg "sftpplus_version=trial" \
           --tag sftpplus:gha-ci .
@@ -67,6 +81,7 @@ jobs:
         --publish 10022:10022 \
         --publish 10021:10021 \
         --publish 10900-10910:10900-10910 \
+        --platform "${{ matrix.test.docker_platform }}" \
         sftpplus:gha-ci
 
     - name: Wait container ports
