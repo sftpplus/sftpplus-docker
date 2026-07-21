@@ -63,11 +63,6 @@ chown -R sftpplus \
     /opt/sftpplus/log \
     /srv/storage
 
-# Adjust permission of TLS placeholder which is generated for each
-# instance during configuration initialization.
-chown -R sftpplus \
-    /opt/sftpplus/lib/python*/site-packages/chevah/server/tls_placeholder.py
-
 # Add extra permissions for OpenShift Container Platform-specific guidelines.
 chgrp -R 0 /opt/sftpplus/configuration \
     /opt/sftpplus/log \
@@ -77,7 +72,7 @@ chmod -R g=u /opt/sftpplus/configuration \
     /opt/sftpplus/log \
     /srv/storage
 
-# Just to troubleshoot and check the permisisons are set ok at the
+# Just to troubleshoot and check the permissions are set ok at the
 # end of the run.
 ls -al /opt/sftpplus/
 # Also show the ID of the sftpplus user.
